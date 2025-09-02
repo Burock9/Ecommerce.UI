@@ -1,0 +1,21 @@
+.categories {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+.category {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.category:hover {
+    background-color: #b8deec;
+    color: white;
+}

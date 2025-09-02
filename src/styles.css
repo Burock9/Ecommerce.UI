@@ -1,23 +1,47 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+    font-family: Arial, sans-serif;
+    margin: 20px;
 }
 
 .container {
-  max-width: 800px;
-  margin: auto;
+    max-width: 800px;
+    margin: auto;
 }
 
 h1 {
-  color: #1976d2;
+    color: #1976d2;
 }
 a {
-  color: #1976d2;
-  text-decoration: none;
-  font-weight: bold;
-  margin-top: 10px;
-  display: inline-block;
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+    display: inline-block;
 }
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
+}
+
+/* styles.css (global stil dosyası) */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1; /* sayfanın ortasını esnetir */
+}
+
+footer {
+  background-color: #f4f4f4;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ddd;
 }

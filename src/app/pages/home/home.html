@@ -1,2 +1,147 @@
-<div class="container">
+<div class="container-fluid px-4 py-5">
+  
+  <!-- Modern Hero Banner -->
+  <section class="hero-section mb-5">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="hero-title mb-4">
+          <span class="gradient-text">Alışverişin</span><br>
+          <span class="hero-highlight">Yeni Boyutu</span>
+        </h1>
+        <p class="hero-subtitle mb-4">Binlerce ürün, özel indirimler ve hızlı teslimat ile mükemmel alışveriş deneyimi.</p>
+        <div class="hero-stats mb-4">
+          <div class="row text-center">
+            <div class="col-4">
+              <div class="stat-number">50K+</div>
+              <div class="stat-label">Ürün</div>
+            </div>
+            <div class="col-4">
+              <div class="stat-number">25K+</div>
+              <div class="stat-label">Müşteri</div>
+            </div>
+            <div class="col-4">
+              <div class="stat-number">99%</div>
+              <div class="stat-label">Memnuniyet</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-hero btn-lg px-5 py-3">
+          <i class="fas fa-shopping-bag me-2"></i>Alışverişe Başla
+        </button>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-image-container">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
+               class="img-fluid rounded-4 shadow-lg" alt="Shopping">
+          <div class="floating-card floating-card-1">
+            <i class="fas fa-shipping-fast text-primary"></i>
+            <span>Ücretsiz Kargo</span>
+          </div>
+          <div class="floating-card floating-card-2">
+            <i class="fas fa-shield-alt text-success"></i>
+            <span>Güvenli Ödeme</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Kategoriler -->
+  <section class="categories-section mb-5">
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <h2 class="section-title">
+          <span class="section-badge">Kategoriler</span>
+        </h2>
+        <p class="section-subtitle">İhtiyacınız olan her şey burada</p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-xl-2 col-lg-4 col-md-6" *ngFor="let category of categories">
+        <div class="category-card-modern" [style.background]="category.color">
+          <div class="category-content">
+            <div class="category-icon">{{category.icon}}</div>
+            <h5 class="category-name">{{category.name}}</h5>
+            <p class="category-desc">{{category.description}}</p>
+            <div class="category-count">{{category.itemCount}}</div>
+          </div>
+          <div class="category-overlay">
+            <button class="btn btn-light btn-sm rounded-pill">
+              <i class="fas fa-arrow-right me-1"></i>Keşfet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Ürünler -->
+  <section class="products-section">
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <h2 class="section-title">
+          <span class="section-badge">Öne Çıkan Ürünler</span>
+        </h2>
+        <p class="section-subtitle">En popüler ve en çok tercih edilen ürünler</p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let product of featuredProducts">
+        <div class="product-card-modern">
+          <div class="product-image-container">
+            <img [src]="product.image" [alt]="product.name" class="product-image">
+            <div class="product-badge" [class]="'badge-' + product.badgeColor">
+              {{product.badge}}
+            </div>
+            <div class="product-actions">
+              <button class="btn btn-action" title="Beğen">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="btn btn-action" title="Hızlı Görüntüle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="product-content">
+            <div class="product-rating mb-2">
+              <div class="stars">
+                <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]" 
+                   [class.active]="star <= product.rating"></i>
+              </div>
+              <span class="rating-text">({{product.reviewCount}} değerlendirme)</span>
+            </div>
+            
+            <h5 class="product-title">{{product.name}}</h5>
+            <p class="product-description">{{product.description}}</p>
+            
+            <div class="product-price-container">
+              <div class="price-section">
+                <span class="current-price">{{product.price | currency:'TRY':'symbol':'1.0-0'}}</span>
+                <span class="original-price" *ngIf="product.originalPrice">
+                  {{product.originalPrice | currency:'TRY':'symbol':'1.0-0'}}
+                </span>
+              </div>
+              <div class="discount-badge" *ngIf="product.originalPrice">
+                %{{((product.originalPrice - product.price) / product.originalPrice * 100) | number:'1.0-0'}} İndirim
+              </div>
+            </div>
+            
+            <button class="btn btn-add-cart w-100">
+              <i class="fas fa-shopping-cart me-2"></i>Sepete Ekle
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-5">
+      <button class="btn btn-outline-primary btn-lg px-5">
+        <i class="fas fa-plus me-2"></i>Daha Fazla Ürün Gör
+      </button>
+    </div>
+  </section>
+  
 </div>

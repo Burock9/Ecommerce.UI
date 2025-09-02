@@ -1,3 +1,175 @@
-<header>
-    <span style="font-size: 24px;">E-Ticaret Sitesi</span>
-</header>
+<nav class="modern-navbar">
+  <div class="container-fluid px-4">
+    <div class="navbar-content">
+      
+      <!-- Left Section: Logo & Navigation -->
+      <div class="navbar-left">
+        <!-- Logo -->
+        <a class="navbar-brand" href="#" routerLink="/home">
+          <div class="logo-container">
+            <i class="fas fa-shopping-bag logo-icon"></i>
+            <span class="brand-text">
+              <span class="brand-main">Heryerheryerde</span>
+              <span class="brand-sub">Premium Shopping</span>
+            </span>
+          </div>
+        </a>
+        
+        <!-- Main Navigation -->
+        <ul class="main-nav d-none d-lg-flex">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/home" routerLinkActive="active">
+              <i class="fas fa-home me-1"></i>Anasayfa
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-th-large me-1"></i>Kategoriler
+            </a>
+            <ul class="dropdown-menu modern-dropdown">
+              <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Elektronik</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-tshirt me-2"></i>Giyim & Moda</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-home me-2"></i>Ev & Yaşam</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-gamepad me-2"></i>Oyun & Hobi</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fas fa-fire me-1"></i>Fırsatlar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fas fa-star me-1"></i>En Çok Satanlar
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Center Section: Search -->
+      <div class="navbar-center d-none d-md-block">
+        <div class="search-container">
+          <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Ürün, marka veya kategori ara...">
+            <div class="search-categories">
+              <select class="category-select">
+                <option value="">Tümü</option>
+                <option value="electronics">Elektronik</option>
+                <option value="fashion">Moda</option>
+                <option value="home">Ev & Yaşam</option>
+              </select>
+            </div>
+            <button class="search-btn" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          
+          <!-- Search Suggestions (Hidden by default) -->
+          <div class="search-suggestions d-none">
+            <div class="suggestion-item">
+              <i class="fas fa-search me-2"></i>iPhone 15
+            </div>
+            <div class="suggestion-item">
+              <i class="fas fa-search me-2"></i>Samsung Galaxy
+            </div>
+            <div class="suggestion-item">
+              <i class="fas fa-search me-2"></i>MacBook Air
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Section: User Actions -->
+      <div class="navbar-right">
+        
+        <!-- Quick Links -->
+        <div class="quick-links d-none d-lg-flex">
+          <a href="#" class="quick-link">
+            <i class="fas fa-truck me-1"></i>
+            <span>Kargo Takibi</span>
+          </a>
+          <a href="#" class="quick-link">
+            <i class="fas fa-headset me-1"></i>
+            <span>Destek</span>
+          </a>
+        </div>
+        
+        <!-- User Actions -->
+        <div class="user-actions">
+          
+          <!-- Wishlist -->
+          <button class="action-btn wishlist-btn" title="Favorilerim">
+            <i class="fas fa-heart"></i>
+            <span class="badge-count">3</span>
+          </button>
+          
+          <!-- User Account -->
+          <div class="dropdown">
+            <button class="action-btn user-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i>
+              <span class="d-none d-lg-inline ms-1">Hesabım</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end modern-dropdown">
+              <li class="dropdown-header">Hoş Geldiniz!</li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Hesap Ayarları</a></li>
+            </ul>
+          </div>
+          
+          <!-- Shopping Cart -->
+          <button class="action-btn cart-btn" title="Sepetim">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge-count cart-count">2</span>
+            <span class="d-none d-lg-inline ms-1">Sepetim</span>
+          </button>
+          
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Search (shown on mobile) -->
+  <div class="mobile-search d-md-none">
+    <div class="container-fluid px-4 py-2">
+      <div class="search-input-group mobile">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" placeholder="Ürün ara...">
+        <button class="search-btn" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Offcanvas Menu -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">
+      <i class="fas fa-shopping-bag me-2"></i>Heryerheryerde
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="mobile-nav">
+      <li><a href="#" routerLink="/home"><i class="fas fa-home me-2"></i>Anasayfa</a></li>
+      <li><a href="#"><i class="fas fa-th-large me-2"></i>Kategoriler</a></li>
+      <li><a href="#"><i class="fas fa-fire me-2"></i>Fırsatlar</a></li>
+      <li><a href="#"><i class="fas fa-star me-2"></i>En Çok Satanlar</a></li>
+      <li><a href="#"><i class="fas fa-truck me-2"></i>Kargo Takibi</a></li>
+      <li><a href="#"><i class="fas fa-headset me-2"></i>Destek</a></li>
+    </ul>
+  </div>
+</div>

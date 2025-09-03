@@ -2,59 +2,33 @@
   <div class="container-fluid px-4">
     <div class="categories-container">
       
-      <!-- Categories Showcase -->
-      <div class="categories-showcase">
-        <div class="category-item featured" routerLink="/categories/electronics">
-          <div class="category-icon">📱</div>
-          <span class="category-name">Elektronik</span>
-          <div class="category-badge">Yeni</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/fashion">
-          <div class="category-icon">👕</div>
-          <span class="category-name">Giyim & Moda</span>
-          <div class="category-count">1.2k+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/home">
-          <div class="category-icon">🏠</div>
-          <span class="category-name">Ev & Yaşam</span>
-          <div class="category-count">890+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/books">
-          <div class="category-icon">📚</div>
-          <span class="category-name">Kitap</span>
-          <div class="category-count">450+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/gaming">
-          <div class="category-icon">🎮</div>
-          <span class="category-name">Oyun & Hobi</span>
-          <div class="category-count">320+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/sports">
-          <div class="category-icon">🏃‍♂️</div>
-          <span class="category-name">Spor</span>
-          <div class="category-count">280+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/beauty">
-          <div class="category-icon">💄</div>
-          <span class="category-name">Kozmetik</span>
-          <div class="category-count">520+</div>
-        </div>
-        
-        <div class="category-item" routerLink="/categories/automotive">
-          <div class="category-icon">🚗</div>
-          <span class="category-name">Otomotiv</span>
-          <div class="category-count">150+</div>
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-3">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+          <span class="visually-hidden">Kategoriler yükleniyor...</span>
         </div>
       </div>
-      
-      <!-- Promotional Banner -->
-      <div class="promo-section">
+
+      <!-- Error State -->
+      <div *ngIf="error" class="alert alert-warning py-2 mb-0" role="alert">
+        <small>{{ error }} - Varsayılan kategoriler gösteriliyor.</small>
+      </div>
+
+      <!-- Categories Showcase -->
+      <div class="categories-showcase" *ngIf="!loading">
+        <div 
+          class="category-item" 
+          *ngFor="let category of categories; let i = index; trackBy: trackByCategory"
+          [class.active]="isActiveCategory(category.id)"
+          [routerLink]="['/categories', category.id]">
+          <div class="category-icon">{{ getCategoryIcon(category.name) }}</div>
+          <span class="category-name">{{ category.name }}</span>
+          <div class="category-indicator" *ngIf="isActiveCategory(category.id)"></div>
+        </div>
+      </div>
+
+      <!-- Promotional Banner 
+       <div class="promo-section" *ngIf="!loading">
         <div class="promo-item flash-sale">
           <i class="fas fa-bolt promo-icon"></i>
           <div class="promo-content">
@@ -74,6 +48,8 @@
           </div>
         </div>
       </div>
+      -->
+      
       
     </div>
   </div>

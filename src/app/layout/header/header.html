@@ -5,12 +5,12 @@
       <!-- Left Section: Logo & Navigation -->
       <div class="navbar-left">
         <!-- Logo -->
-        <a class="navbar-brand" href="#" routerLink="/home">
+        <a class="navbar-brand" routerLink="/">
           <div class="logo-container">
             <i class="fas fa-shopping-bag logo-icon"></i>
             <span class="brand-text">
               <span class="brand-main">Heryerheryerde</span>
-              <span class="brand-sub">Premium Shopping</span>
+              <span class="brand-sub">Güvenilir Alışverişin Adresi</span>
             </span>
           </div>
         </a>
@@ -18,7 +18,7 @@
         <!-- Main Navigation -->
         <ul class="main-nav d-none d-lg-flex">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/home" routerLinkActive="active">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <i class="fas fa-home me-1"></i>Anasayfa
             </a>
           </li>
@@ -33,6 +33,7 @@
               <li><a class="dropdown-item" href="#"><i class="fas fa-gamepad me-2"></i>Oyun & Hobi</a></li>
             </ul>
           </li>
+          <!--
           <li class="nav-item">
             <a class="nav-link" href="#">
               <i class="fas fa-fire me-1"></i>Fırsatlar
@@ -43,6 +44,7 @@
               <i class="fas fa-star me-1"></i>En Çok Satanlar
             </a>
           </li>
+          -->
         </ul>
       </div>
       
@@ -83,8 +85,8 @@
       <!-- Right Section: User Actions -->
       <div class="navbar-right">
         
-        <!-- Quick Links -->
-        <div class="quick-links d-none d-lg-flex">
+        <!-- Quick Links
+          <div class="quick-links d-none d-lg-flex">
           <a href="#" class="quick-link">
             <i class="fas fa-truck me-1"></i>
             <span>Kargo Takibi</span>
@@ -94,15 +96,19 @@
             <span>Destek</span>
           </a>
         </div>
+        -->
+
         
         <!-- User Actions -->
         <div class="user-actions">
           
-          <!-- Wishlist -->
+          <!-- Wishlist 
           <button class="action-btn wishlist-btn" title="Favorilerim">
             <i class="fas fa-heart"></i>
             <span class="badge-count">3</span>
-          </button>
+          </button> 
+          -->
+
           
           <!-- User Account -->
           <div class="dropdown">

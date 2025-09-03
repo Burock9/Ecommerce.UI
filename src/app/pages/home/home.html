@@ -107,12 +107,12 @@
       <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let product of products">
         <div class="product-card-modern">
           <div class="product-image-container">
-            <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop'" 
+            <img [src]="product.imageUrl || getPlaceholderImage(product.categoryName)" 
                  [alt]="product.name" class="product-image">
-            <div class="product-badge badge-success" *ngIf="product.stockQuantity > 0">
+            <div class="product-badge badge-success" *ngIf="product.stock > 0">
               Stokta
             </div>
-            <div class="product-badge badge-danger" *ngIf="product.stockQuantity === 0">
+            <div class="product-badge badge-danger" *ngIf="product.stock === 0">
               Tükendi
             </div>
             <div class="product-actions">
@@ -131,7 +131,7 @@
                 <i class="fas fa-star active" *ngFor="let star of [1,2,3,4]"></i>
                 <i class="fas fa-star"></i>
               </div>
-              <span class="rating-text">({{product.stockQuantity}} adet)</span>
+              <span class="rating-text">({{product.stock}} adet)</span>
             </div>
             
             <h5 class="product-title">{{product.name}}</h5>
@@ -142,9 +142,9 @@
               <small class="text-muted d-block">{{product.categoryName}}</small>
             </div>
             
-            <button class="btn btn-add-cart w-100 mt-3" [disabled]="product.stockQuantity === 0">
+            <button class="btn btn-add-cart w-100 mt-3" [disabled]="product.stock === 0">
               <i class="fas fa-shopping-cart me-2"></i>
-              {{product.stockQuantity > 0 ? 'Sepete Ekle' : 'Stok Yok'}}
+              {{product.stock > 0 ? 'Sepete Ekle' : 'Stok Yok'}}
             </button>
           </div>
         </div>

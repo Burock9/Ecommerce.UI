@@ -47,6 +47,27 @@ export class Home implements OnInit {
     this.loading = false;
   }
 
+  getPlaceholderImage(categoryName: string): string {
+    const placeholderMap: { [key: string]: string } = {
+      'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=300&fit=crop',
+      'Giyim': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop',
+      'Ev & Yaşam': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop',
+      'Spor': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop',
+      'Kitap': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=300&fit=crop',
+      'Oyun': 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=300&h=300&fit=crop',
+      'Kozmetik': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&h=300&fit=crop'
+    };
+    
+    // Partial match için kategori adını kontrol et
+    for (const [key, image] of Object.entries(placeholderMap)) {
+      if (categoryName?.toLowerCase().includes(key.toLowerCase())) {
+        return image;
+      }
+    }
+    
+    return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop'; // Default
+  }
+
   categories = [
     { 
       id: 1,

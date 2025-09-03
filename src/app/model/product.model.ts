@@ -1,19 +1,19 @@
 export interface Product {
     id: number;
     name: string;
-    description: string;
+    description?: string;
     price: number;
-    stockQuantity: number;
-    category: Category;
+    stock: number;
     imageUrl?: string;
+    category: Category;
 }
 
 export interface ProductIndex {
     id: string;
     name: string;
-    description: string;
+    description?: string;
     price: number;
-    stockQuantity: number;
+    stock: number; // Backend'de 'stock' olarak tanımlı
     categoryId: string;
     categoryName: string;
     imageUrl?: string;
@@ -22,5 +22,5 @@ export interface ProductIndex {
 export interface Category {
     id: number;
     name: string;
-    description: string;
+    description?: string;
 }

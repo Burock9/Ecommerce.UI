@@ -1,6 +1,6 @@
 /* Modern Categories Bar */
 .modern-categories-bar {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #b8deec 100%);
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   padding: 15px 0;
   position: relative;
@@ -13,10 +13,10 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+  height: 5px;
+  background: linear-gradient(90deg, #49acd7, #243ab6, #49acd7);
   background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: shimmer 8s ease-in-out infinite;
 }
 
 @keyframes shimmer {
@@ -31,7 +31,7 @@
   gap: 30px;
 }
 
-/* Categories Showcase */
+/* Categories Showcase (90deg, #667eea, #764ba2, #667eea); #49acd7, #243ab6 */
 .categories-showcase {
   display: flex;
   align-items: center;
@@ -73,7 +73,7 @@
 }
 
 .category-item.featured {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   color: white;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -104,7 +104,7 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #ffd700;
+  background: #79d3d1;
   color: #2c3e50;
   font-size: 0.65rem;
   font-weight: 600;

@@ -1,6 +1,6 @@
 /* Modern Navbar Styles */
 .modern-navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
   position: sticky;
   top: 0;
@@ -113,7 +113,7 @@
 }
 
 .dropdown-item:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   color: white !important;
 }
 
@@ -177,7 +177,7 @@
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   border: none;
   color: white;
   padding: 10px 15px;
@@ -246,7 +246,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* User Actions */
+/* User Actions (135deg, #49acd7 0%, #243ab6 100%); (135deg, #ffd700 0%, #ffed4e 100%);*/
 .user-actions {
   display: flex;
   align-items: center;
@@ -275,13 +275,13 @@
 }
 
 .cart-btn {
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  background: linear-gradient(135deg, #62cfcd 0%, #1ca07d 100%);
   color: #2c3e50 !important;
   font-weight: 600;
 }
 
 .cart-btn:hover {
-  background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+  background: linear-gradient(135deg, #1ca07d 0%, #62cfcd 100%);
   color: #2c3e50 !important;
 }
 

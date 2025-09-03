@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../../service/product.service';
+import { ProductIndex } from '../../model/product.model';
+import { Page } from '../../model/response.model';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +10,43 @@ import { Component } from '@angular/core';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
+export class Home implements OnInit {
+  // Backend'den gelecek ürünler
+  products: ProductIndex[] = [];
+  loading = false;
+  error: string | null = null;
+
+  constructor(private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  loadProducts(): void {
+    this.loading = true;
+    this.error = null;
+    
+    this.productService.getAllProducts(0, 8).subscribe({
+      next: (response: Page<ProductIndex>) => {
+        this.products = response.content;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Ürünler yüklenirken hata oluştu';
+        this.loading = false;
+        console.error('Error loading products:', error);
+        // Hata durumunda mockData'yı kullan
+        this.loadMockData();
+      }
+    });
+  }
+
+  private loadMockData(): void {
+    // Backend bağlantısı olmadığında mock data kullan
+    this.featuredProducts = this.featuredProducts; // Mevcut mock data
+    this.loading = false;
+  }
+
   categories = [
     { 
       id: 1,

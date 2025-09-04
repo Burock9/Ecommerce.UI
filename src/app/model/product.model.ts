@@ -13,7 +13,7 @@ export interface ProductIndex {
     name: string;
     description?: string;
     price: number;
-    stock: number; 
+    stock: number; // Backend'de 'stock' olarak tanımlı
     categoryId: string;
     categoryName: string;
     imageUrl?: string;

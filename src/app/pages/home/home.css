@@ -1,4 +1,4 @@
-/* Modern Hero Section */
+/* Modern Hero Section (135deg, #667eea 0%, #764ba2 100%)*/
 .hero-section {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 20px;
@@ -13,7 +13,7 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -30,7 +30,7 @@
 }
 
 .btn-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   border: none;
   color: white;
   border-radius: 50px;
@@ -103,7 +103,7 @@
 }
 
 .section-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -345,7 +345,7 @@
 }
 
 .btn-add-cart {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
   border: none;
   color: white;
   padding: 12px 24px;

@@ -1,21 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { CategoryService } from '../../service/category.service';
+import { CategoryIndex } from '../../model/category.model';
+import { Page } from '../../model/response.model';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-categories-bar',
-<<<<<<< Updated upstream
-  imports: [RouterLink],
-=======
   standalone: true,
-  imports: [CommonModule, RouterLink], 
->>>>>>> Stashed changes
+  imports: [CommonModule, RouterLink], // CommonModule'u önce yazdım
   templateUrl: './categories-bar.html',
   styleUrl: './categories-bar.css'
 })
-export class CategoriesBar {
+export class CategoriesBar implements OnInit {
+  categories: CategoryIndex[] = [];
+  loading = false;
+  error: string | null = null;
+  activeCategoryId: string | null = null;
 
-<<<<<<< Updated upstream
-=======
   constructor(
     private categoryService: CategoryService,
     private router: Router
@@ -74,7 +78,7 @@ export class CategoriesBar {
     this.categories = [
       { id: '1', name: 'Elektronik', description: 'Elektronik ürünler' },
       { id: '2', name: 'Giyim', description: 'Giyim ürünleri' },
-      { id: '3', name: 'Ev Aletleri', description: 'Ev ürünleri' },
+      { id: '3', name: 'Ev & Yaşam', description: 'Ev ürünleri' },
       { id: '4', name: 'Spor', description: 'Spor ürünleri' },
       { id: '5', name: 'Kitap', description: 'Kitaplar' }
     ];
@@ -89,7 +93,7 @@ export class CategoriesBar {
     const iconMap: { [key: string]: string } = {
       'Elektronik': '📱',
       'Giyim': '👕',
-      'Ev Aletleri': '🏠',
+      'Ev & Yaşam': '🏠',
       'Spor': '🏃‍♂️',
       'Kitap': '📚',
       'Oyun': '🎮',
@@ -108,5 +112,4 @@ export class CategoriesBar {
     
     return '🏷️'; // Default icon
   }
->>>>>>> Stashed changes
 }

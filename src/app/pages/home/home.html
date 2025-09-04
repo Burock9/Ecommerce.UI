@@ -86,8 +86,73 @@
         <p class="section-subtitle">En popüler ve en çok tercih edilen ürünler</p>
       </div>
     </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Yükleniyor...</span>
+      </div>
+      <p class="text-muted">Ürünler yükleniyor...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="alert alert-warning text-center" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      {{ error }}
+      <br><small class="text-muted">Demo ürünler gösteriliyor.</small>
+    </div>
+
+    <!-- Backend Products -->
+    <div *ngIf="!loading && !error && products.length > 0" class="row g-4">
+      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let product of products">
+        <div class="product-card-modern">
+          <div class="product-image-container">
+            <img [src]="product.imageUrl || getPlaceholderImage(product.categoryName)" 
+                 [alt]="product.name" class="product-image">
+            <div class="product-badge badge-success" *ngIf="product.stock > 0">
+              Stokta
+            </div>
+            <div class="product-badge badge-danger" *ngIf="product.stock === 0">
+              Tükendi
+            </div>
+            <div class="product-actions">
+              <button class="btn btn-action" title="Beğen">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="btn btn-action" title="Hızlı Görüntüle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="product-content">
+            <div class="product-rating mb-2">
+              <div class="stars">
+                <i class="fas fa-star active" *ngFor="let star of [1,2,3,4]"></i>
+                <i class="fas fa-star"></i>
+              </div>
+              <span class="rating-text">({{product.stock}} adet)</span>
+            </div>
+            
+            <h5 class="product-title">{{product.name}}</h5>
+            <p class="product-description">{{product.description}}</p>
+            
+            <div class="product-price-container">
+              <span class="product-price">{{product.price | currency:'TRY':'symbol':'1.2-2'}}</span>
+              <small class="text-muted d-block">{{product.categoryName}}</small>
+            </div>
+            
+            <button class="btn btn-add-cart w-100 mt-3" [disabled]="product.stock === 0">
+              <i class="fas fa-shopping-cart me-2"></i>
+              {{product.stock > 0 ? 'Sepete Ekle' : 'Stok Yok'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     
-    <div class="row g-4">
+    <!-- Mock Products (fallback veya backend yoksa) -->
+    <div *ngIf="!loading && (error || products.length === 0)" class="row g-4">
       <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let product of featuredProducts">
         <div class="product-card-modern">
           <div class="product-image-container">

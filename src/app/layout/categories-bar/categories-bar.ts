@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-categories-bar',
   standalone: true,
-  imports: [CommonModule, RouterLink], // CommonModule'u önce yazdım
+  imports: [CommonModule, RouterLink], 
   templateUrl: './categories-bar.html',
   styleUrl: './categories-bar.css'
 })
@@ -78,7 +78,7 @@ export class CategoriesBar implements OnInit {
     this.categories = [
       { id: '1', name: 'Elektronik', description: 'Elektronik ürünler' },
       { id: '2', name: 'Giyim', description: 'Giyim ürünleri' },
-      { id: '3', name: 'Ev & Yaşam', description: 'Ev ürünleri' },
+      { id: '3', name: 'Ev Aletleri', description: 'Ev ürünleri' },
       { id: '4', name: 'Spor', description: 'Spor ürünleri' },
       { id: '5', name: 'Kitap', description: 'Kitaplar' }
     ];
@@ -93,7 +93,7 @@ export class CategoriesBar implements OnInit {
     const iconMap: { [key: string]: string } = {
       'Elektronik': '📱',
       'Giyim': '👕',
-      'Ev & Yaşam': '🏠',
+      'Ev Aletleri': '🏠',
       'Spor': '🏃‍♂️',
       'Kitap': '📚',
       'Oyun': '🎮',

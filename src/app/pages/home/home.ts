@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductService } from '../../service/product.service';
+import { CategoryService } from '../../service/category.service';
 import { ProductIndex } from '../../model/product.model';
+import { CategoryIndex } from '../../model/category.model';
 import { Page } from '../../model/response.model';
 
 @Component({
@@ -16,10 +19,20 @@ export class Home implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private productService: ProductService) {}
+  // Backend'den gelecek kategoriler
+  categories: CategoryIndex[] = [];
+  categoriesLoading = false;
+  categoriesError: string | null = null;
+
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategories();
   }
 
   loadProducts(): void {
@@ -29,6 +42,8 @@ export class Home implements OnInit {
     this.productService.getAllProducts(0, 8).subscribe({
       next: (response: Page<ProductIndex>) => {
         this.products = response.content;
+        console.log('🔍 Backend\'ten gelen ürünler:', this.products);
+        console.log('🖼️ İlk ürünün imageUrl\'si:', this.products[0]?.imageUrl);
         this.loading = false;
       },
       error: (error) => {
@@ -47,77 +62,83 @@ export class Home implements OnInit {
     this.loading = false;
   }
 
-  getPlaceholderImage(categoryName: string): string {
-    const placeholderMap: { [key: string]: string } = {
-      'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=300&fit=crop',
-      'Giyim': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop',
-      'Ev & Yaşam': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop',
-      'Spor': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop',
-      'Kitap': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=300&fit=crop',
-      'Oyun': 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=300&h=300&fit=crop',
-      'Kozmetik': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&h=300&fit=crop'
+  loadCategories(): void {
+    this.categoriesLoading = true;
+    this.categoriesError = null;
+    
+    this.categoryService.getAllCategories(0, 10).subscribe({
+      next: (response: Page<CategoryIndex>) => {
+        this.categories = response.content;
+        console.log('🏷️ Backend\'ten gelen kategoriler:', this.categories);
+        this.categoriesLoading = false;
+      },
+      error: (error) => {
+        this.categoriesError = 'Kategoriler yüklenirken hata oluştu';
+        this.categoriesLoading = false;
+        console.error('Error loading categories:', error);
+        // Hata durumunda mock kategoriler kullan
+        this.loadMockCategories();
+      }
+    });
+  }
+
+  private loadMockCategories(): void {
+    // Backend bağlantısı olmadığında mock kategoriler
+    this.categories = [
+      { id: '1', name: 'Elektronik', description: 'Son teknoloji ürünler' },
+      { id: '2', name: 'Giyim', description: 'Trendy kıyafetler' },
+      { id: '3', name: 'Ev Aletleri', description: 'Ev dekorasyonu' },
+      { id: '4', name: 'Spor', description: 'Spor ürünleri' },
+      { id: '5', name: 'Kitap', description: 'Kitaplar' },
+      { id: '6', name: 'Oyun', description: 'Oyun ürünleri' }
+    ];
+    this.categoriesLoading = false;
+  }
+
+  // Kategori kartına tıklandığında çalışacak fonksiyon
+  onCategoryClick(category: CategoryIndex): void {
+    this.router.navigate(['/categories', category.id]);
+  }
+
+  // Kategori ikonunu dinamik olarak getir
+  getCategoryIcon(categoryName: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Elektronik': '📱',
+      'Giyim': '👕', 
+      'Ev Aletleri': '🏠',
+      'Spor': '🏃‍♂️',
+      'Kitap': '📚',
+      'Oyun': '🎮',
+      'Kozmetik': '💄',
+      'Otomotiv': '🚗',
+      'Müzik': '🎵',
+      'Sağlık': '�'
     };
     
-    // Partial match için kategori adını kontrol et
-    for (const [key, image] of Object.entries(placeholderMap)) {
-      if (categoryName?.toLowerCase().includes(key.toLowerCase())) {
-        return image;
+    for (const [key, icon] of Object.entries(iconMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return icon;
       }
     }
     
-    return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop'; // Default
+    return '🏷️'; // Default icon
   }
 
-  categories = [
-    { 
-      id: 1,
-      icon: '�', 
-      name: 'Elektronik', 
-      description: 'Son teknoloji ürünler',
-      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      itemCount: '2.1k ürün'
-    },
-    { 
-      id: 2,
-      icon: '�👕', 
-      name: 'Giyim & Moda', 
-      description: 'Trendy kıyafetler ve aksesuar',
-      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      itemCount: '1.8k ürün'
-    },
-    { 
-      id: 3,
-      icon: '🏠', 
-      name: 'Ev & Yaşam', 
-      description: 'Ev dekorasyonu ve mobilya',
-      color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      itemCount: '950 ürün'
-    },
-    { 
-      id: 4,
-      icon: '🎮', 
-      name: 'Oyun & Hobi', 
-      description: 'Eğlence ve hobi ürünleri',
-      color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      itemCount: '720 ürün'
-    },
-    { 
-      id: 5,
-      icon: '📚', 
-      name: 'Kitap & Kırtasiye', 
-      description: 'Eğitim ve kırtasiye malzemeleri',
-      color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      itemCount: '1.2k ürün'
-    },
-    { 
-      id: 6,
-      icon: '�‍♂️', 
-      name: 'Spor & Outdoor', 
-      description: 'Spor ve açık hava aktiviteleri',
-      color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      itemCount: '640 ürün'
-    }
-  ];
+  // Kategori rengini dinamik olarak getir
+  getCategoryColor(index: number): string {
+    const colors = [
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 
+      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      'linear-gradient(135deg, #e862ecff 0%, #8485d1ff 100%)'
+
+    ];
+    
+    return colors[index % colors.length];
+  }
 
   featuredProducts = [
     {

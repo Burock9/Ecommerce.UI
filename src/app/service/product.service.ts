@@ -16,6 +16,25 @@ export class ProductService {
     return this.apiService.get<Page<ProductIndex>>('/products', { page, size });
   }
 
+  getAllProductsList(): Observable<Product[]> {
+    return this.apiService.get<ResponseWrapper<Page<Product>>>('/admin/products')
+      .pipe(map(response => response.data.content));
+  }
+
+  createProduct(product: Product): Observable<Product> {
+    return this.apiService.post<ResponseWrapper<Product>>('/admin/products', product)
+      .pipe(map(response => response.data));
+  }
+
+  updateProduct(id: number, product: Product): Observable<Product> {
+    return this.apiService.put<ResponseWrapper<Product>>(`/admin/products/${id}`, product)
+      .pipe(map(response => response.data));
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.apiService.delete<void>(`/admin/products/${id}`);
+  }
+
   searchProducts(query: string, page: number = 0, size: number = 20): Observable<Page<ProductIndex>> {
     return this.apiService.get<Page<ProductIndex>>('/products/search', { q: query, page, size });
   }

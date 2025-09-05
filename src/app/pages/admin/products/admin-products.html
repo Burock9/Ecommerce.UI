@@ -1,0 +1,170 @@
+<div class="admin-products">
+  <div class="page-header">
+    <h2><i class="fas fa-box me-2"></i>Ürün Yönetimi</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <i class="fas fa-plus me-1"></i>Yeni Ürün Ekle
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Ürün ara..." 
+        [(ngModel)]="searchTerm" 
+        (input)="searchProducts()">
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Ürünler yükleniyor...</span>
+  </div>
+
+  <!-- Products Table -->
+  <div class="products-table" *ngIf="!isLoading">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Resim</th>
+          <th>Ürün Adı</th>
+          <th>Açıklama</th>
+          <th>Fiyat</th>
+          <th>Stok</th>
+          <th>Kategori</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts" class="product-row">
+          <td>
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+          </td>
+          <td class="product-name">{{ product.name }}</td>
+          <td class="product-description">{{ product.description }}</td>
+          <td class="product-price">{{ product.price | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+          <td class="product-stock">
+            <span class="stock-badge" [class.low-stock]="product.stock < 10">
+              {{ product.stock }}
+            </span>
+          </td>
+          <td class="product-category">{{ product.category?.name }}</td>
+          <td class="product-actions">
+            <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditModal(product)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredProducts.length === 0 && !isLoading">
+      <i class="fas fa-box-open"></i>
+      <h4>Ürün bulunamadı</h4>
+      <p>Arama kriterlerinize uygun ürün bulunamadı.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle' }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="saveProduct()">
+        <div class="form-group">
+          <label for="productName">Ürün Adı *</label>
+          <input 
+            id="productName"
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="newProduct.name" 
+            name="name"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="productDescription">Açıklama</label>
+          <textarea 
+            id="productDescription"
+            class="form-control" 
+            [(ngModel)]="newProduct.description" 
+            name="description"
+            rows="3"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productPrice">Fiyat *</label>
+            <input 
+              id="productPrice"
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="newProduct.price" 
+              name="price"
+              min="0"
+              step="0.01"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="productStock">Stok *</label>
+            <input 
+              id="productStock"
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="newProduct.stock" 
+              name="stock"
+              min="0"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="productImage">Ürün Resmi URL</label>
+          <input 
+            id="productImage"
+            type="url" 
+            class="form-control" 
+            [(ngModel)]="newProduct.imageUrl" 
+            name="imageUrl">
+        </div>
+
+        <div class="form-group">
+          <label for="productCategory">Kategori ID *</label>
+          <input 
+            id="productCategory"
+            type="number" 
+            class="form-control" 
+            [(ngModel)]="newProduct.categoryId" 
+            name="categoryId"
+            min="1"
+            required>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">
+            İptal
+          </button>
+          <button type="submit" class="btn btn-primary">
+            {{ editingProduct ? 'Güncelle' : 'Ekle' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

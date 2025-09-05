@@ -8,4 +8,5 @@ export interface CategoryIndex {
   id: string;
   name: string;
   description?: string;
+  productCount?: number;
 }

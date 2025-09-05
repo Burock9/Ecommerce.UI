@@ -22,4 +22,8 @@ export class Header {
   logout(): void {
     this.authService.logout();
   }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 }

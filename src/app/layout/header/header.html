@@ -115,6 +115,9 @@
           <!-- User Info - Logged In -->
           <div class="user-info" *ngIf="currentUser">
             <span class="welcome-text me-3">Hoş geldin, {{ currentUser.username }}!</span>
+            <a routerLink="/admin" class="btn btn-warning me-2" *ngIf="isAdmin()">
+              <i class="fas fa-cog me-1"></i>Admin
+            </a>
             <button class="btn btn-outline-danger" (click)="logout()">
               <i class="fas fa-sign-out-alt me-1"></i>Çıkış
             </button>

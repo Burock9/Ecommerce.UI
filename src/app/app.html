@@ -2,8 +2,8 @@
   <!-- Header -->
   <app-header></app-header>
   
-  <!-- Categories Bar -->
-  <app-categories-bar></app-categories-bar>
+  <!-- Categories Bar - Hide on admin pages -->
+  <app-categories-bar *ngIf="!isAdminRoute()"></app-categories-bar>
   
   <!-- Main Content -->
   <main class="flex-grow-1">

@@ -18,7 +18,10 @@ export class AuthService {
 
   private initializeAuth(): void {
     const token = localStorage.getItem('token');
-    if (token) {
+    const username = localStorage.getItem('username');
+    
+    if (token && username) {
+      // Token varsa ama user bilgisi yoksa API'den yükle
       this.loadCurrentUser();
     }
   }
@@ -28,7 +31,16 @@ export class AuthService {
     .pipe(map(response => response.data), tap(tokenData => {
       localStorage.setItem('token', tokenData.token);
       localStorage.setItem('username', tokenData.username);
-      this.loadCurrentUser();
+      
+      // TokenResponse'dan user objesi oluşturalım
+      const user: User = {
+        id: 0, // Backend'den gelmiyor, geçici olarak 0
+        username: tokenData.username,
+        email: '', // Backend'den gelmiyor
+        roles: tokenData.roles
+      };
+      
+      this.currentUserSubject.next(user);
       })
     );
   }
@@ -61,5 +73,13 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    if (!user || !user.roles) return false;
+    
+    // Hem ADMIN hem de ROLE_ADMIN kontrolü yapalım
+    return user.roles.includes('ADMIN') || user.roles.includes('ROLE_ADMIN');
   }
 }

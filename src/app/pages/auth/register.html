@@ -1,0 +1,93 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="card-header">
+      <h2>Kayıt Ol</h2>
+      <p>Yeni hesap oluşturun</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="register-form">
+      <div class="form-group">
+        <label for="username">Kullanıcı Adı</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="registerRequest.username"
+          required
+          minlength="3"
+          class="form-control"
+          placeholder="Kullanıcı adınızı girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="registerRequest.email"
+          required
+          email
+          class="form-control"
+          placeholder="Email adresinizi girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="registerRequest.password"
+          required
+          minlength="6"
+          class="form-control"
+          placeholder="Şifrenizi girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Şifre Tekrar</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          required
+          class="form-control"
+          placeholder="Şifrenizi tekrar girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        <i class="fas fa-check-circle"></i>
+        {{ successMessage }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn-register"
+        [disabled]="!registerForm.form.valid || loading"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">Kayıt Ol</span>
+        <span *ngIf="loading">Kayıt oluşturuluyor...</span>
+      </button>
+    </form>
+
+    <div class="card-footer">
+      <p>Zaten hesabınız var mı? <a routerLink="/login" class="login-link">Giriş yapın</a></p>
+    </div>
+  </div>
+</div>

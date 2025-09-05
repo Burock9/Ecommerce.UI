@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../service/product.service';
@@ -20,16 +20,21 @@ export class CategoryPage implements OnInit {
   products: ProductIndex[] = [];
   loading = false;
   error: string | null = null;
-  
+
   currentPage = 0;
   totalPages = 0;
   totalElements = 0;
+
+  // Sıralama ve görünüm seçenekleri
+  currentSort = 'En Popüler';
+  currentView = 'grid'; // 'grid' veya 'list'
+  showSortDropdown = false;
 
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
     private categoryService: CategoryService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -53,10 +58,12 @@ export class CategoryPage implements OnInit {
   loadProducts(page: number = 0): void {
     this.loading = true;
     this.error = null;
-    
+
     this.productService.getProductsByCategory(+this.categoryId, page, 12).subscribe({
       next: (response: Page<ProductIndex>) => {
         this.products = response.content;
+        console.log('🔍 Kategori sayfasında ürünler:', this.products);
+        console.log('🖼️ İlk ürünün imageUrl\'si:', this.products[0]?.imageUrl);
         this.currentPage = response.number;
         this.totalPages = response.totalPages;
         this.totalElements = response.totalElements;
@@ -74,24 +81,35 @@ export class CategoryPage implements OnInit {
     this.loadProducts(page);
   }
 
-  getPlaceholderImage(categoryName: string): string {
-    const placeholderMap: { [key: string]: string } = {
-      'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=300&fit=crop',
-      'Giyim': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop',
-      'Ev & Yaşam': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop',
-      'Spor': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop',
-      'Kitap': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=300&fit=crop',
-      'Oyun': 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=300&h=300&fit=crop',
-      'Kozmetik': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&h=300&fit=crop'
-    };
-    
-    // Partial match için kategori adını kontrol et
-    for (const [key, image] of Object.entries(placeholderMap)) {
-      if (categoryName?.toLowerCase().includes(key.toLowerCase())) {
-        return image;
-      }
+  // Dropdown'ı aç/kapat
+  toggleSortDropdown(): void {
+    this.showSortDropdown = !this.showSortDropdown;
+  }
+
+  // Dışına tıklandığında dropdown'ı kapat
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const dropdown = target.closest('.sort-dropdown');
+
+    if (!dropdown) {
+      this.showSortDropdown = false;
     }
-    
-    return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop'; // Default
+  }
+
+  // Sıralama değiştirildiğinde çalışacak
+  onSortChange(sortType: string): void {
+    this.currentSort = sortType;
+    this.showSortDropdown = false; // Dropdown'ı kapat
+    console.log('🔄 Sıralama değişti:', sortType);
+    // TODO: Backend'e sıralama parametresi gönderilecek
+    // this.loadProducts(0); // Sıralama ile ürünleri yeniden yükle
+  }
+
+  // Görünüm değiştirildiğinde çalışacak
+  onViewChange(viewType: 'grid' | 'list'): void {
+    this.currentView = viewType;
+    console.log('👁️ Görünüm değişti:', viewType);
+    // TODO: Grid/List view toggle functionality
   }
 }

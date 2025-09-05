@@ -57,17 +57,35 @@
       </div>
     </div>
     
-    <div class="row g-4">
-      <div class="col-xl-2 col-lg-4 col-md-6" *ngFor="let category of categories">
-        <div class="category-card-modern" [style.background]="category.color">
+    <!-- Loading State for Categories -->
+    <div *ngIf="categoriesLoading" class="text-center py-3">
+      <div class="spinner-border text-primary mb-2" role="status">
+        <span class="visually-hidden">Kategoriler yükleniyor...</span>
+      </div>
+      <p class="text-muted">Kategoriler yükleniyor...</p>
+    </div>
+
+    <!-- Error State for Categories -->
+    <div *ngIf="categoriesError" class="alert alert-warning text-center" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      {{ categoriesError }}
+    </div>
+    
+    <div *ngIf="!categoriesLoading && !categoriesError" class="row g-4">
+      <div class="col-xl-2 col-lg-4 col-md-6" *ngFor="let category of categories; let i = index">
+        <div class="category-card-modern" 
+             [style.background]="getCategoryColor(i)"
+             (click)="onCategoryClick(category)"
+             style="cursor: pointer;">
           <div class="category-content">
-            <div class="category-icon">{{category.icon}}</div>
+            <div class="category-icon">{{getCategoryIcon(category.name)}}</div>
             <h5 class="category-name">{{category.name}}</h5>
             <p class="category-desc">{{category.description}}</p>
-            <div class="category-count">{{category.itemCount}}</div>
+            <div class="category-count">Keşfet</div>
           </div>
           <div class="category-overlay">
-            <button class="btn btn-light btn-sm rounded-pill">
+            <button class="btn btn-light btn-sm rounded-pill"
+                    (click)="onCategoryClick(category); $event.stopPropagation()">
               <i class="fas fa-arrow-right me-1"></i>Keşfet
             </button>
           </div>
@@ -107,8 +125,18 @@
       <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let product of products">
         <div class="product-card-modern">
           <div class="product-image-container">
-            <img [src]="product.imageUrl || getPlaceholderImage(product.categoryName)" 
-                 [alt]="product.name" class="product-image">
+            <!-- Backend'ten gelen fotoğraf varsa onu göster -->
+            <img *ngIf="product.imageUrl" 
+                 [src]="product.imageUrl" 
+                 [alt]="product.name" 
+                 class="product-image">
+            
+            <!-- Fotoğraf yoksa güzel placeholder görseli -->
+            <img *ngIf="!product.imageUrl" 
+                 src="https://lh5.googleusercontent.com/proxy/WyXx9KnsCHldAEhrQAeET9MHD8dkD--jYAGTDux22ROO_tw1yrv8mXeZoEOtHF5jDh328MI6mwxTvToTyJGOfrzqT4-E" 
+                 [alt]="product.name + ' - Fotoğraf hazırlanıyor'" 
+                 class="product-image product-placeholder">
+            
             <div class="product-badge badge-success" *ngIf="product.stock > 0">
               Stokta
             </div>

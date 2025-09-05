@@ -1,0 +1,57 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="card-header">
+      <h2>Giriş Yap</h2>
+      <p>Hesabınıza giriş yapın</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+      <div class="form-group">
+        <label for="username">Kullanıcı Adı</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="loginRequest.username"
+          required
+          class="form-control"
+          placeholder="Kullanıcı adınızı girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="loginRequest.password"
+          required
+          class="form-control"
+          placeholder="Şifrenizi girin"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="!loginForm.form.valid || loading"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">Giriş Yap</span>
+        <span *ngIf="loading">Giriş yapılıyor...</span>
+      </button>
+    </form>
+
+    <div class="card-footer">
+      <p>Hesabınız yok mu? <a routerLink="/register" class="register-link">Kayıt olun</a></p>
+    </div>
+  </div>
+</div>

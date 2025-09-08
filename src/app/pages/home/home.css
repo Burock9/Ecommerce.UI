@@ -1,14 +1,21 @@
-/* Modern Hero Carousel */
+/* Container Max Width - Tam genişlik kullanımı */
 .hero-carousel-section {
-  margin-bottom: 80px;
+  margin-bottom: 100px;
+  width: 100vw; /* Tam viewport genişliği */
+  margin-left: calc(50% - 50vw); /* Container'dan taşma */
+  margin-right: calc(50% - 50vw);
+  padding: 0; /* Yan padding kaldır */
 }
 
 .hero-carousel-container {
   position: relative;
-  height: 600px;
-  border-radius: 20px;
+  height: 650px; /* Daha yüksek ve ferah */
+  border-radius: 0; /* Köşe yuvarlama kaldır - full screen effect */
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  margin: 0;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
 }
 
 .carousel-wrapper {
@@ -61,7 +68,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 40px 0;
+  padding: 60px 80px; /* Daha geniş padding */
+  max-width: 1400px; /* İçerik max genişliği */
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .slide-badge {
@@ -78,7 +89,7 @@
 }
 
 .slide-title {
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 4rem); /* Responsive font size */
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 20px;
@@ -188,48 +199,54 @@
   filter: brightness(1.1);
 }
 
-/* Slide Images */
+/* Slide Images - Daha geniş ve dengeli */
 .slide-image-container {
   position: relative;
-  height: 400px;
+  height: 100%;
+  max-height: 500px; /* Daha yüksek resim alanı */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  padding: 40px; /* Resim etrafında boşluk */
 }
 
 .slide-image {
   width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  height: 100%;
+  object-fit: cover; /* Crop koruma */
+  object-position: center; /* Merkez odak */
+  border-radius: 25px; /* Hafif yuvarlama */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(0.95); /* Hafif küçültme - breathing room */
 }
 
 .floating-element {
   position: absolute;
-  background: linear-gradient(135deg, rgba(100, 255, 218, 0.9) 0%, rgba(79, 209, 199, 0.9) 100%);
-  backdrop-filter: blur(10px);
-  padding: 12px 20px;
-  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(100, 255, 218, 0.95) 0%, rgba(79, 209, 199, 0.95) 100%);
+  backdrop-filter: blur(15px);
+  padding: 15px 25px; /* Daha büyük padding */
+  border-radius: 30px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 600;
-  color: #2c3e50;
-  box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
+  color: #1a202c;
+  box-shadow: 0 15px 40px rgba(100, 255, 218, 0.4);
   animation: float 3s ease-in-out infinite;
-  border: 1px solid rgba(100, 255, 218, 0.5);
+  border: 2px solid rgba(100, 255, 218, 0.7);
+  z-index: 3;
 }
 
 .floating-element.element-1 {
-  top: 20%;
-  right: 10%;
+  top: 15%; /* Daha iyi pozisyon */
+  right: 8%;
   animation-delay: 0s;
 }
 
 .floating-element.element-2 {
-  bottom: 20%;
-  left: 10%;
+  bottom: 15%; /* Daha iyi pozisyon */
+  left: 8%;
   animation-delay: 1.5s;
 }
 
@@ -238,62 +255,64 @@
   50% { transform: translateY(-10px); }
 }
 
-/* Carousel Navigation */
+/* Carousel Navigation - Geniş alan için optimize */
 .carousel-navigation {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 100%;
+  width: calc(100% - 160px); /* Daha geniş margin */
+  left: 80px;
   display: flex;
   justify-content: space-between;
-  padding: 0 20px;
-  z-index: 3;
+  z-index: 4; /* Yüksek z-index */
   pointer-events: none;
 }
 
 .nav-btn {
-  background: linear-gradient(135deg, rgba(100, 255, 218, 0.9) 0%, rgba(79, 209, 199, 0.9) 100%);
-  border: 1px solid rgba(100, 255, 218, 0.5);
-  width: 50px;
-  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  width: 40px; /* Daha büyük butonlar */
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2c3e50;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
   pointer-events: auto;
-  box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+  box-shadow: 0 8px 30px rgba(100, 255, 218, 0.4);
+  font-weight: bold;
 }
 
 .nav-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(100, 255, 218, 0.4);
-  filter: brightness(1.1);
+  transform: scale(1.15);
+  box-shadow: 0 12px 40px rgba(100, 255, 218, 0.6);
+  filter: brightness(1.2);
 }
 
-/* Carousel Indicators */
+/* Carousel Indicators - Daha belirgin */
 .carousel-indicators {
   position: absolute;
-  bottom: 30px;
+  bottom: 40px; /* Daha aşağıda */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 12px;
-  z-index: 3;
+  gap: 15px; /* Daha geniş boşluk */
+  z-index: 4;
 }
 
 .indicator {
-  width: 12px;
-  height: 12px;
+  width: 14px; /* Daha büyük */
+  height: 14px;
   border-radius: 50%;
-  border: 2px solid rgba(100, 255, 218, 0.5);
+  border: 2px solid rgba(100, 255, 218, 0.6);
   background: rgba(100, 255, 218, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .indicator.active {
@@ -303,15 +322,15 @@
   box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
 }
 
-/* Progress Bar */
+/* Progress Bar - Daha belirgin */
 .progress-bar {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 4px;
-  background: rgba(100, 255, 218, 0.2);
-  z-index: 3;
+  height: 6px; /* Daha kalın */
+  background: rgba(100, 255, 218, 0.15);
+  z-index: 4;
 }
 
 .progress-fill {
@@ -319,25 +338,242 @@
   background: linear-gradient(90deg, #64ffda 0%, #4fd1c7 100%);
   width: 0%;
   transition: width 0.1s ease-out;
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
 }
 
-/* Responsive carousel */
-@media (max-width: 768px) {
+/* Responsive carousel - Professional Breakpoints */
+/* Ultra Wide Screens (4K, Ultrawide monitors) */
+@media (min-width: 1920px) {
+  .hero-carousel-container {
+    height: 750px; /* Daha yüksek ultra-wide için */
+  }
+  
+  .slide-content {
+    padding: 80px 120px; /* Daha geniş padding */
+  }
+  
   .slide-title {
-    font-size: 2.5rem;
+    font-size: 5rem;
+  }
+  
+  .nav-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 24px;
+  }
+  
+  .carousel-navigation {
+    width: calc(100% - 240px);
+    left: 120px;
+  }
+}
+
+/* Large Screens (Desktop) */
+@media (max-width: 1919px) and (min-width: 1440px) {
+  .hero-carousel-container {
+    height: 650px;
+  }
+  
+  .slide-content {
+    padding: 60px 80px;
+  }
+}
+
+/* Standard Desktop */
+@media (max-width: 1439px) and (min-width: 1200px) {
+  .hero-carousel-container {
+    height: 600px;
+  }
+  
+  .slide-content {
+    padding: 50px 60px;
+  }
+}
+
+/* Small Desktop / Large Tablet */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .hero-carousel-container {
+    height: 550px;
+  }
+  
+  .slide-content {
+    padding: 40px 50px;
+  }
+  
+  .slide-stats {
+    gap: 20px;
+  }
+  
+  .carousel-navigation {
+    width: calc(100% - 120px);
+    left: 60px;
+  }
+  
+  .nav-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 18px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 991px) and (min-width: 768px) {
+  .hero-carousel-container {
+    height: 400px;
+  }
+  
+  .slide-content {
+    padding: 25px 15px;
   }
   
   .slide-stats {
     flex-direction: column;
     gap: 15px;
+    align-items: flex-start;
   }
   
-  .hero-carousel-container {
-    height: 500px;
+  .stat-item {
+    text-align: left;
   }
   
   .floating-element {
     display: none;
+  }
+  
+  .carousel-navigation {
+    padding: 0 15px;
+  }
+  
+  .nav-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .hero-carousel-section {
+    margin-bottom: 60px;
+    margin-left: calc(50% - 50vw + 15px); /* Küçük margin mobilde */
+    margin-right: calc(50% - 50vw + 15px);
+  }
+  
+  .hero-carousel-container {
+    height: 450px; /* Mobile için yeterli yükseklik */
+    border-radius: 15px; /* Hafif corner radius mobile için */
+  }
+  
+  .slide-content {
+    padding: 30px 25px;
+    text-align: center;
+  }
+  
+  .slide-badge {
+    font-size: 12px;
+    padding: 6px 15px;
+  }
+  
+  .slide-subtitle {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+  
+  .slide-stats {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .feature-list {
+    display: none; /* Mobile'da feature list gizle */
+  }
+  
+  .discount-banner {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .discount-percent {
+    font-size: 2rem;
+  }
+  
+  .btn-slide-cta {
+    padding: 12px 25px;
+    font-size: 14px;
+    align-self: center;
+  }
+  
+  .carousel-navigation {
+    width: calc(100% - 60px);
+    left: 30px;
+  }
+  
+  .nav-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+  
+  .carousel-indicators {
+    bottom: 25px;
+    gap: 10px;
+  }
+  
+  .indicator {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .floating-element,
+  .floating-card {
+    display: none;
+  }
+  
+  .slide-image-container {
+    padding: 20px;
+  }
+  
+  .slide-image {
+    border-radius: 15px;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .hero-carousel-container {
+    height: 320px;
+  }
+  
+  .slide-content {
+    padding: 15px 10px;
+  }
+  
+  .slide-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .discount-banner {
+    padding: 12px;
+  }
+  
+  .btn-slide-cta {
+    padding: 10px 20px;
+    font-size: 13px;
   }
 }
 

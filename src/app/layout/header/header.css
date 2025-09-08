@@ -1,11 +1,12 @@
-/* Modern Navbar Styles */
+/* Dark Modern Navbar Styles */
 .modern-navbar {
-  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+  background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(100, 255, 218, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
 }
 
 .navbar-content {
@@ -19,7 +20,7 @@
 /* Logo Section */
 .navbar-brand {
   text-decoration: none;
-  color: white !important;
+  color: #64ffda !important;
 }
 
 .logo-container {
@@ -30,13 +31,19 @@
 
 .logo-icon {
   font-size: 1.8rem;
-  color: #ffd700;
+  color: #64ffda;
   animation: glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes glow {
-  from { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
-  to { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+  from { 
+    text-shadow: 0 0 5px #64ffda, 0 0 10px #64ffda; 
+    color: #64ffda;
+  }
+  to { 
+    text-shadow: 0 0 10px #64ffda, 0 0 20px #64ffda, 0 0 30px #64ffda; 
+    color: #4fd1c7;
+  }
 }
 
 .brand-text {
@@ -48,12 +55,13 @@
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1;
-  color: white;
+  color: #f8fafc;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
 }
 
 .brand-sub {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(100, 255, 218, 0.8);
   font-weight: 300;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -74,7 +82,7 @@
 }
 
 .nav-link {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(226, 232, 240, 0.9) !important;
   text-decoration: none;
   padding: 10px 15px;
   border-radius: 8px;
@@ -85,24 +93,27 @@
 }
 
 .nav-link:hover {
-  color: white !important;
-  background: rgba(255, 255, 255, 0.1);
+  color: #64ffda !important;
+  background: rgba(100, 255, 218, 0.1);
   transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(100, 255, 218, 0.3);
 }
 
 .nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: white !important;
+  background: rgba(100, 255, 218, 0.2);
+  color: #64ffda !important;
+  border: 1px solid rgba(100, 255, 218, 0.3);
 }
 
 /* Dropdown Styles */
 .modern-dropdown {
-  background: white;
-  border: none;
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border: 1px solid rgba(100, 255, 218, 0.2);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   padding: 10px 0;
   margin-top: 8px;
+  backdrop-filter: blur(10px);
 }
 
 .dropdown-item {
@@ -110,15 +121,16 @@
   transition: all 0.3s ease;
   border: none;
   background: none;
+  color: #e2e8f0;
 }
 
 .dropdown-item:hover {
-  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
-  color: white !important;
+  background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+  color: #1a202c !important;
 }
 
 .dropdown-header {
-  color: #667eea;
+  color: #64ffda;
   font-weight: 600;
   font-size: 0.9rem;
   padding: 10px 20px 5px;
@@ -134,20 +146,23 @@
 .search-input-group {
   display: flex;
   align-items: center;
-  background: white;
+  background: rgba(45, 55, 72, 0.9);
+  border: 1px solid rgba(100, 255, 218, 0.2);
   border-radius: 25px;
   padding: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .search-input-group:focus-within {
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 25px rgba(100, 255, 218, 0.3);
   transform: translateY(-1px);
+  border-color: #64ffda;
 }
 
 .search-icon {
-  color: #6c757d;
+  color: #64ffda;
   margin-left: 15px;
   margin-right: 10px;
 }
@@ -158,38 +173,42 @@
   outline: none;
   padding: 8px 0;
   font-size: 0.95rem;
+  background: transparent;
+  color: #e2e8f0;
 }
 
 .search-input::placeholder {
-  color: #adb5bd;
+  color: #a0aec0;
 }
 
 .category-select {
   border: none;
   outline: none;
   background: transparent;
-  color: #6c757d;
+  color: #64ffda;
   font-size: 0.9rem;
   cursor: pointer;
   padding: 0 10px;
-  border-left: 1px solid #e9ecef;
+  border-left: 1px solid rgba(100, 255, 218, 0.3);
   margin-left: 10px;
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #49acd7 0%, #243ab6 100%);
+  background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
   border: none;
-  color: white;
+  color: #1a202c;
   padding: 10px 15px;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-left: 10px;
+  font-weight: 600;
 }
 
 .search-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+  background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
 }
 
 .search-input-group.mobile {
@@ -201,22 +220,26 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border: 1px solid rgba(100, 255, 218, 0.2);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   z-index: 1000;
   margin-top: 5px;
+  backdrop-filter: blur(10px);
 }
 
 .suggestion-item {
   padding: 12px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-bottom: 1px solid #f8f9fa;
+  border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+  color: #e2e8f0;
 }
 
 .suggestion-item:hover {
-  background: #f8f9fa;
+  background: rgba(100, 255, 218, 0.1);
+  color: #64ffda;
 }
 
 .suggestion-item:last-child {
@@ -254,9 +277,9 @@
 }
 
 .action-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(100, 255, 218, 0.1);
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  color: #64ffda;
   padding: 10px 15px;
   border-radius: 10px;
   cursor: pointer;
@@ -266,25 +289,29 @@
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .action-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(100, 255, 218, 0.2);
   transform: translateY(-1px);
-  color: white;
+  color: #4fd1c7;
+  box-shadow: 0 4px 15px rgba(100, 255, 218, 0.2);
 }
 
 .cart-btn {
-  background: linear-gradient(135deg, #62cfcd 0%, #1ca07d 100%);
-  color: #2c3e50 !important;
+  background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+  color: #1a202c !important;
   font-weight: 600;
   padding: 8px 16px;
   align-items: center;
 }
 
 .cart-btn:hover {
-  background: linear-gradient(135deg, #1ca07d 0%, #62cfcd 100%);
-  color: #2c3e50 !important;
+  background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
+  color: #1a202c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(100, 255, 218, 0.3);
 }
 
 .badge-count {

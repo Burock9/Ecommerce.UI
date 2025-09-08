@@ -1,10 +1,11 @@
-/* Modern Categories Bar - Premium Color Palette */
+/* Dark Modern Categories Bar */
 .modern-categories-bar {
-  background: linear-gradient(135deg, #fafafa 0%, #f0f4f8 100%);
-  border-bottom: 1px solid rgba(52, 73, 94, 0.08);
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  border-bottom: 1px solid rgba(100, 255, 218, 0.1);
   padding: 15px 0;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .modern-categories-bar::before {
@@ -14,7 +15,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #1e3a8a, #3b82f6, #06b6d4, #1e3a8a);
+  background: linear-gradient(90deg, #64ffda, #4fd1c7, #38b2ac, #64ffda);
   background-size: 300% 100%;
   animation: shimmer 6s ease-in-out infinite;
 }
@@ -52,39 +53,43 @@
   align-items: center;
   gap: 10px;
   padding: 14px 20px;
-  background: white;
+  background: rgba(45, 55, 72, 0.8);
   border-radius: 12px;
   text-decoration: none;
-  color: #475569;
+  color: #e2e8f0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
   min-width: fit-content;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   font-weight: 500;
+  backdrop-filter: blur(10px);
 }
 
 .category-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-  border-color: #3b82f6;
-  color: #1e40af;
+  box-shadow: 0 8px 25px rgba(100, 255, 218, 0.25);
+  border-color: #64ffda;
+  color: #64ffda;
   text-decoration: none;
+  background: rgba(45, 55, 72, 0.9);
 }
 
 /* Aktif Kategori Stilleri */
 .category-item.active {
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-  color: white;
+  background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+  color: #1a202c;
   border-color: transparent;
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(100, 255, 218, 0.4);
+  font-weight: 600;
 }
 
 .category-item.active:hover {
-  color: white;
+  color: #1a202c;
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 30px rgba(100, 255, 218, 0.5);
+  background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
 }
 
 /* Aktif Kategori İndikatörü */
@@ -95,9 +100,9 @@
   transform: translateX(-50%);
   width: 6px;
   height: 6px;
-  background: #fbbf24;
+  background: #ffd700;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 
 .category-icon {
@@ -105,6 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: inherit;
 }
 
 .category-name {

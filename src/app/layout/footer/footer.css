@@ -1,10 +1,11 @@
-/* Modern Footer */
+/* Dark Modern Footer */
 footer {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    color: white;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: #e2e8f0;
     margin-top: auto;
     position: relative;
     overflow: hidden;
+    border-top: 1px solid rgba(100, 255, 218, 0.1);
 }
 
 footer::before {
@@ -14,7 +15,7 @@ footer::before {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+    background: linear-gradient(90deg, #64ffda, #4fd1c7, #64ffda);
     background-size: 200% 100%;
     animation: shimmer 3s ease-in-out infinite;
 }
@@ -25,29 +26,32 @@ footer::before {
 }
 
 footer h5 {
-    color: #ffd700;
+    color: #64ffda;
     font-weight: 700;
     margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
 }
 
 footer h6 {
-    color: #ecf0f1;
+    color: #f8fafc;
     font-weight: 600;
     margin-bottom: 12px;
 }
 
 footer .text-muted {
-    color: #bdc3c7 !important;
+    color: #a0aec0 !important;
     line-height: 1.6;
 }
 
 footer a.text-muted:hover {
-    color: #667eea !important;
+    color: #64ffda !important;
     transition: color 0.3s ease;
+    text-shadow: 0 0 8px rgba(100, 255, 218, 0.3);
 }
 
 footer .btn-outline-light:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+    color: #1a202c;
     border-color: transparent;
     transform: translateY(-2px);
     transition: all 0.3s ease;

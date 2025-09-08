@@ -99,6 +99,8 @@ export class CategoriesBar implements OnInit {
       'Oyun': '🎮',
       'Kozmetik': '💄',
       'Otomotiv': '🚗',
+      'Teknoloji': '💻',
+      'Bakım Ürünleri': '🪒',
       'Müzik': '🎵',
       'Sağlık': '💊'
     };

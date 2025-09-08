@@ -1,47 +1,92 @@
 <div class="container-fluid px-4 py-5">
   
-  <!-- Modern Hero Banner -->
-  <section class="hero-section mb-5">
-    <div class="row align-items-center">
-      <div class="col-lg-6">
-        <h1 class="hero-title mb-4">
-          <span class="gradient-text">Alışverişin</span><br>
-          <span class="hero-highlight">Yeni Boyutu</span>
-        </h1>
-        <p class="hero-subtitle mb-4">Binlerce ürün, özel indirimler ve hızlı teslimat ile mükemmel alışveriş deneyimi.</p>
-        <div class="hero-stats mb-4">
-          <div class="row text-center">
-            <div class="col-4">
-              <div class="stat-number">50K+</div>
-              <div class="stat-label">Ürün</div>
-            </div>
-            <div class="col-4">
-              <div class="stat-number">25K+</div>
-              <div class="stat-label">Müşteri</div>
-            </div>
-            <div class="col-4">
-              <div class="stat-number">99%</div>
-              <div class="stat-label">Memnuniyet</div>
+  <!-- Modern Hero Carousel -->
+  <section class="hero-carousel-section mb-5">
+    <div class="hero-carousel-container">
+      <div class="carousel-wrapper">
+        <!-- Dynamic Slides based on Categories -->
+        <div class="carousel-slide" 
+             *ngFor="let category of getCarouselCategories(); let i = index" 
+             [class.active]="i === 0"
+             [attr.data-slide]="i + 1">
+          <div class="slide-background"></div>
+          <div class="container-fluid">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <div class="slide-content">
+                  <span class="slide-badge">{{getCategoryEmoji(category.name)}} {{category.name}}</span>
+                  <h1 class="slide-title">
+                    {{getCategorySlideTitle(category.name)}}<br>
+                    <span class="highlight">{{getCategorySlideSubtitle(category.name)}}</span>
+                  </h1>
+                  <p class="slide-subtitle">{{getCategorySlideDescription(category.name)}}</p>
+                  <div class="slide-stats" *ngIf="i === 0">
+                    <div class="stat-item">
+                      <span class="stat-number">{{categories.length}}+</span>
+                      <span class="stat-label">Kategori</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">{{products.length * 100}}+</span>
+                      <span class="stat-label">Ürün</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">99%</span>
+                      <span class="stat-label">Memnuniyet</span>
+                    </div>
+                  </div>
+                  <div class="feature-list" *ngIf="i !== 0">
+                    <div class="feature-item" *ngFor="let feature of getCategoryFeatures(category.name)">
+                      <i class="fas fa-check-circle"></i>
+                      <span>{{feature}}</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-slide-cta" (click)="onCategoryClick(category)">
+                    <i class="{{getCategoryIcon(category.name)}} me-2"></i>{{category.name}} Keşfet
+                  </button>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="slide-image-container">
+                  <img [src]="getCategorySlideImage(category.name)" 
+                       [alt]="category.name" 
+                       class="slide-image">
+                  <div class="floating-element element-1">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Ücretsiz Kargo</span>
+                  </div>
+                  <div class="floating-element element-2">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Güvenli Ödeme</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <button class="btn btn-hero btn-lg px-5 py-3">
-          <i class="fas fa-shopping-bag me-2"></i>Alışverişe Başla
+      </div>
+
+      <!-- Carousel Navigation -->
+      <div class="carousel-navigation" *ngIf="getCarouselCategories().length > 1">
+        <button class="nav-btn prev-btn" (click)="changeSlide(-1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="nav-btn next-btn" (click)="changeSlide(1)">
+          <i class="fas fa-chevron-right"></i>
         </button>
       </div>
-      <div class="col-lg-6">
-        <div class="hero-image-container">
-          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
-               class="img-fluid rounded-4 shadow-lg" alt="Shopping">
-          <div class="floating-card floating-card-1">
-            <i class="fas fa-shipping-fast text-primary"></i>
-            <span>Ücretsiz Kargo</span>
-          </div>
-          <div class="floating-card floating-card-2">
-            <i class="fas fa-shield-alt text-success"></i>
-            <span>Güvenli Ödeme</span>
-          </div>
-        </div>
+
+      <!-- Carousel Indicators -->
+      <div class="carousel-indicators" *ngIf="getCarouselCategories().length > 1">
+        <button class="indicator" 
+                *ngFor="let category of getCarouselCategories(); let i = index"
+                [class.active]="i === 0"
+                (click)="goToSlide(i + 1)" 
+                [attr.data-slide]="i + 1"></button>
+      </div>
+
+      <!-- Auto-progress bar -->
+      <div class="progress-bar" *ngIf="getCarouselCategories().length > 1">
+        <div class="progress-fill"></div>
       </div>
     </div>
   </section>

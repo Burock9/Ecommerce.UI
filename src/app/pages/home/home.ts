@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../service/product.service';
 import { CategoryService } from '../../service/category.service';
@@ -13,7 +13,7 @@ import { Page } from '../../model/response.model';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit {
+export class Home implements OnInit, AfterViewInit, OnDestroy {
   // Backend'den gelecek ürünler
   products: ProductIndex[] = [];
   loading = false;
@@ -104,15 +104,17 @@ export class Home implements OnInit {
   getCategoryIcon(categoryName: string): string {
     const iconMap: { [key: string]: string } = {
       'Elektronik': '📱',
-      'Giyim': '👕', 
+      'Giyim': '👕',
       'Ev Aletleri': '🏠',
       'Spor': '🏃‍♂️',
       'Kitap': '📚',
       'Oyun': '🎮',
       'Kozmetik': '💄',
       'Otomotiv': '🚗',
+      'Teknoloji': '💻',
+      'Bakım Ürünleri': '🪒',
       'Müzik': '🎵',
-      'Sağlık': '�'
+      'Sağlık': '💊'
     };
     
     for (const [key, icon] of Object.entries(iconMap)) {
@@ -190,4 +192,326 @@ export class Home implements OnInit {
       reviewCount: 167
     }
   ];
+
+  // Carousel variables
+  currentSlide = 1;
+  totalSlides = 3;
+  autoSlideInterval: any;
+  progressInterval: any;
+  slideTimingMs = 5000; // 5 saniye - CSS ile senkron
+  progressStartTime = 0;
+
+  // Dynamic category carousel methods
+  getCarouselCategories(): CategoryIndex[] {
+    // İlk 5 kategoriyi carousel için kullan (çok fazla slide olmasın)
+    return this.categories.slice(0, 5);
+  }
+
+  getCategoryEmoji(categoryName: string): string {
+    const emojiMap: { [key: string]: string } = {
+      'Elektronik': '📱',
+      'Bilgisayar': '💻', 
+      'Telefon': '📱',
+      'Laptop': '💻',
+      'Moda': '👗',
+      'Giyim': '👕',
+      'Ayakkabı': '👟',
+      'Ev': '🏠',
+      'Mobilya': '🪑',
+      'Kitap': '📚',
+      'Spor': '⚽',
+      'Oyun': '🎮',
+      'Müzik': '🎵',
+      'Sağlık': '💊',
+      'Kozmetik': '💄',
+      'Otomotiv': '🚗',
+      'Bahçe': '🌱',
+      'Bebek': '👶',
+      'Pet Shop': '🐕',
+      'Yemek': '🍕'
+    };
+    
+    // Kategori isminde geçen anahtar kelimeleri ara
+    for (const [key, emoji] of Object.entries(emojiMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return emoji;
+      }
+    }
+    
+    return '🛍️'; // Default emoji
+  }
+
+  getCategorySlideTitle(categoryName: string): string {
+    const titleMap: { [key: string]: string } = {
+      'Elektronik': 'Teknolojinin Gücü',
+      'Bilgisayar': 'Dijital Dünyaya Adım',
+      'Telefon': 'İletişimin Zirvesi',
+      'Laptop': 'Mobil Güç Merkezi',
+      'Moda': 'Stilin Adresi',
+      'Giyim': 'Tarzını Keşfet',
+      'Ayakkabı': 'Her Adımda Stil',
+      'Ev': 'Yaşam Alanın',
+      'Mobilya': 'Evinizi Yenileyin',
+      'Kitap': 'Bilginin Hazinesi',
+      'Spor': 'Sağlıklı Yaşam',
+      'Oyun': 'Eğlencenin Merkezi',
+      'Müzik': 'Melodilerin Dünyası',
+      'Sağlık': 'Sağlığınız Öncelik',
+      'Kozmetik': 'Güzelliğin Sırrı',
+      'Otomotiv': 'Yolların Efendisi',
+      'Bahçe': 'Doğayla Buluşma',
+      'Bebek': 'Minik Kalpler İçin',
+      'Pet Shop': 'Dost Dostları İçin',
+      'Yemek': 'Lezzetin Adresi'
+    };
+    
+    for (const [key, title] of Object.entries(titleMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return title;
+      }
+    }
+    
+    return `${categoryName} Dünyası`;
+  }
+
+  getCategorySlideSubtitle(categoryName: string): string {
+    const subtitleMap: { [key: string]: string } = {
+      'Elektronik': 'Hayatını Kolaylaştır',
+      'Bilgisayar': 'Performansın Zirvesi',
+      'Telefon': 'Her An Bağlantıda',
+      'Laptop': 'Özgürce Çalış',
+      'Moda': 'Kendini İfade Et',
+      'Giyim': 'Konforlu Zarafet',
+      'Ayakkabı': 'Konfor ve Şıklık',
+      'Ev': 'Konforun Merkezi',
+      'Mobilya': 'Yaşam Kalitesi',
+      'Kitap': 'Hayal Gücünü Besle',
+      'Spor': 'Formda Kal',
+      'Oyun': 'Macera Seni Bekliyor',
+      'Müzik': 'Ruhunu Besle',
+      'Sağlık': 'İyiliğin Kaynağı',
+      'Kozmetik': 'İçindeki Güzelliği Ortaya Çıkar',
+      'Otomotiv': 'Güvenli Yolculuklar',
+      'Bahçe': 'Yeşil Yaşam',
+      'Bebek': 'Mutlu Büyüme',
+      'Pet Shop': 'Mutlu Dostlar',
+      'Yemek': 'Damak Zevki'
+    };
+    
+    for (const [key, subtitle] of Object.entries(subtitleMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return subtitle;
+      }
+    }
+    
+    return 'Premium Kalite';
+  }
+
+  getCategorySlideDescription(categoryName: string): string {
+    const descMap: { [key: string]: string } = {
+      'Elektronik': 'En yeni teknoloji ürünleri, akıllı cihazlar ve inovatif çözümler ile dijital hayatınızı zenginleştirin.',
+      'Bilgisayar': 'Güçlü işlemciler, yüksek performans ve son teknoloji özellikler ile çalışma deneyiminizi üst seviyeye taşıyın.',
+      'Telefon': 'Son teknoloji akıllı telefonlar, güçlü kameralar ve uzun pil ömrü ile her an bağlantıda kalın.',
+      'Moda': 'En trend parçalar, dünya markalarından seçkin koleksiyonlar ve zamansız şıklık bir arada.',
+      'Ev': 'Evinizi daha konforlu, daha şık ve daha fonksiyonel hale getiren özel ürünler.',
+      'Spor': 'Sağlıklı yaşam için gereken tüm spor ekipmanları ve fitness ürünleri burada.'
+    };
+    
+    for (const [key, desc] of Object.entries(descMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return desc;
+      }
+    }
+    
+    return `${categoryName} kategorisinde en kaliteli ürünler, uygun fiyatlar ve hızlı teslimat ile mükemmel alışveriş deneyimi.`;
+  }
+
+  getCategoryFeatures(categoryName: string): string[] {
+    const featureMap: { [key: string]: string[] } = {
+      'Elektronik': [
+        'Son teknoloji ürünler',
+        'Resmi distribütör garantisi', 
+        'Ücretsiz kurulum desteği'
+      ],
+      'Bilgisayar': [
+        'Yüksek performans garantisi',
+        'Uzman teknik destek',
+        'Ücretsiz yazılım kurulumu'
+      ],
+      'Telefon': [
+        'Orijinal ürün garantisi',
+        'Ekran koruma hediyesi',
+        'Ücretsiz kargo ve kurulum'
+      ],
+      'Moda': [
+        'Dünya markalarından seçimler',
+        'Memnun kalmazsan iade et',
+        'Trend danışmanlığı'
+      ],
+      'Ev': [
+        'Kalite garantisi',
+        'Profesyonel montaj hizmeti',
+        'Ücretsiz değişim hakkı'
+      ],
+      'Spor': [
+        'Uzman spor danışmanlığı',
+        'Antrenman programları',
+        'Kalite garantisi'
+      ]
+    };
+    
+    for (const [key, features] of Object.entries(featureMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return features;
+      }
+    }
+    
+    return [
+      'Premium kalite garantisi',
+      'Hızlı ve güvenli teslimat',
+      'Müşteri memnuniyeti öncelik'
+    ];
+  }
+
+  getCategorySlideImage(categoryName: string): string {
+    const imageMap: { [key: string]: string } = {
+      'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=400&fit=crop',
+      'Bilgisayar': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
+      'Telefon': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=400&fit=crop',
+      'Laptop': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=400&fit=crop',
+      'Moda': 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&h=400&fit=crop',
+      'Giyim': 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600&h=400&fit=crop',
+      'Ayakkabı': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=400&fit=crop',
+      'Ev': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
+      'Mobilya': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop',
+      'Kitap': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
+      'Spor': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
+      'Oyun': 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=600&h=400&fit=crop',
+      'Müzik': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop',
+      'Sağlık': 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=400&fit=crop',
+      'Kozmetik': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=400&fit=crop',
+      'Otomotiv': 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=400&fit=crop',
+      'Bahçe': 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop',
+      'Bebek': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop',
+      'Pet Shop': 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop',
+      'Yemek': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=400&fit=crop'
+    };
+    
+    for (const [key, image] of Object.entries(imageMap)) {
+      if (categoryName.toLowerCase().includes(key.toLowerCase())) {
+        return image;
+      }
+    }
+    
+    return 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop'; // Default image
+  }
+
+  ngAfterViewInit(): void {
+    // Kategoriler yüklendikten sonra carousel'ı başlat
+    setTimeout(() => {
+      if (this.getCarouselCategories().length > 1) {
+        this.totalSlides = this.getCarouselCategories().length;
+        this.startAutoSlide();
+      }
+    }, 1000);
+  }
+
+  // Carousel methods
+  changeSlide(direction: number): void {
+    const totalSlides = this.getCarouselCategories().length;
+    if (totalSlides <= 1) return;
+    
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    // Remove active class from current slide
+    slides[this.currentSlide - 1]?.classList.remove('active');
+    indicators[this.currentSlide - 1]?.classList.remove('active');
+    
+    // Calculate next slide
+    this.currentSlide += direction;
+    
+    if (this.currentSlide > totalSlides) {
+      this.currentSlide = 1;
+    } else if (this.currentSlide < 1) {
+      this.currentSlide = totalSlides;
+    }
+    
+    // Add active class to new slide
+    slides[this.currentSlide - 1]?.classList.add('active');
+    indicators[this.currentSlide - 1]?.classList.add('active');
+    
+    this.resetAutoSlide();
+  }
+
+  goToSlide(slideNumber: number): void {
+    const totalSlides = this.getCarouselCategories().length;
+    if (totalSlides <= 1) return;
+    
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    // Remove active class from current slide
+    slides[this.currentSlide - 1]?.classList.remove('active');
+    indicators[this.currentSlide - 1]?.classList.remove('active');
+    
+    // Set new slide
+    this.currentSlide = slideNumber;
+    
+    // Add active class to new slide
+    slides[this.currentSlide - 1]?.classList.add('active');
+    indicators[this.currentSlide - 1]?.classList.add('active');
+    
+    this.resetAutoSlide();
+  }
+
+  startAutoSlide(): void {
+    if (this.getCarouselCategories().length <= 1) return;
+    
+    this.autoSlideInterval = setInterval(() => {
+      this.changeSlide(1);
+    }, this.slideTimingMs);
+    
+    this.startProgressBar();
+  }
+
+  resetAutoSlide(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+    }
+    this.startAutoSlide();
+  }
+
+  startProgressBar(): void {
+    this.progressStartTime = Date.now();
+    const progressFill = document.querySelector('.progress-fill') as HTMLElement;
+    
+    if (progressFill) {
+      progressFill.style.width = '0%';
+      
+      this.progressInterval = setInterval(() => {
+        const elapsed = Date.now() - this.progressStartTime;
+        const progress = (elapsed / this.slideTimingMs) * 100;
+        
+        if (progress >= 100) {
+          progressFill.style.width = '100%';
+          clearInterval(this.progressInterval);
+        } else {
+          progressFill.style.width = progress + '%';
+        }
+      }, 50); // Her 50ms'de güncelle (smooth animation)
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+    }
+  }
 }

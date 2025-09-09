@@ -243,7 +243,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   getCategorySlideTitle(categoryName: string): string {
     const titleMap: { [key: string]: string } = {
-      'Teknoloji': 'Teknolojinin Gücü',
+      'Teknoloji': 'Teknolojinin En Yenisi',
       'Elektronik': 'Elektronik Dünyaya Adım',
       'Telefon': 'İletişimin Zirvesi',
       'Laptop': 'Mobil Güç Merkezi',

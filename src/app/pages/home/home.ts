@@ -210,7 +210,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   getCategoryEmoji(categoryName: string): string {
     const emojiMap: { [key: string]: string } = {
       'Elektronik': '📱',
-      'Bilgisayar': '💻', 
+      'Teknoloji': '💻', 
       'Telefon': '📱',
       'Laptop': '💻',
       'Moda': '👗',
@@ -243,8 +243,8 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   getCategorySlideTitle(categoryName: string): string {
     const titleMap: { [key: string]: string } = {
-      'Elektronik': 'Teknolojinin Gücü',
-      'Bilgisayar': 'Dijital Dünyaya Adım',
+      'Teknoloji': 'Teknolojinin Gücü',
+      'Elektronik': 'Elektronik Dünyaya Adım',
       'Telefon': 'İletişimin Zirvesi',
       'Laptop': 'Mobil Güç Merkezi',
       'Moda': 'Stilin Adresi',
@@ -277,7 +277,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   getCategorySlideSubtitle(categoryName: string): string {
     const subtitleMap: { [key: string]: string } = {
       'Elektronik': 'Hayatını Kolaylaştır',
-      'Bilgisayar': 'Performansın Zirvesi',
+      'Teknoloji': 'Performansın Zirvesi',
       'Telefon': 'Her An Bağlantıda',
       'Laptop': 'Özgürce Çalış',
       'Moda': 'Kendini İfade Et',
@@ -311,7 +311,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     const descMap: { [key: string]: string } = {
       'Elektronik': 'En yeni teknoloji ürünleri, akıllı cihazlar ve inovatif çözümler ile dijital hayatınızı zenginleştirin.',
       'Bilgisayar': 'Güçlü işlemciler, yüksek performans ve son teknoloji özellikler ile çalışma deneyiminizi üst seviyeye taşıyın.',
-      'Telefon': 'Son teknoloji akıllı telefonlar, güçlü kameralar ve uzun pil ömrü ile her an bağlantıda kalın.',
+      'Teknoloji': 'Son teknoloji akıllı telefonlar, güçlü bilgisayarlar ile her an bağlantıda kalın.',
       'Moda': 'En trend parçalar, dünya markalarından seçkin koleksiyonlar ve zamansız şıklık bir arada.',
       'Ev': 'Evinizi daha konforlu, daha şık ve daha fonksiyonel hale getiren özel ürünler.',
       'Spor': 'Sağlıklı yaşam için gereken tüm spor ekipmanları ve fitness ürünleri burada.'
@@ -338,7 +338,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
         'Uzman teknik destek',
         'Ücretsiz yazılım kurulumu'
       ],
-      'Telefon': [
+      'Teknoloji': [
         'Orijinal ürün garantisi',
         'Ekran koruma hediyesi',
         'Ücretsiz kargo ve kurulum'
@@ -376,7 +376,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   getCategorySlideImage(categoryName: string): string {
     const imageMap: { [key: string]: string } = {
       'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=400&fit=crop',
-      'Bilgisayar': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
+      'Teknoloji': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
       'Telefon': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=400&fit=crop',
       'Laptop': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=400&fit=crop',
       'Moda': 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&h=400&fit=crop',

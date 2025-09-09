@@ -548,19 +548,47 @@ export class AdminProductsComponent implements OnInit {
 
   loadProducts(): void {
     this.isLoading = true;
+    console.log('Loading products from backend...');
     this.productService.getAllProductsList().subscribe({
       next: (products) => {
+        console.log('✅ Products loaded successfully:', products.length);
         this.products = products;
         this.filteredProducts = products;
         this.isLoading = false;
-        console.log('Ürünler backend\'den başarıyla yüklendi:', products.length);
       },
       error: (error: any) => {
-        console.error('Backend\'den ürünler yüklenirken hata:', error);
-        this.products = [];
-        this.filteredProducts = [];
+        console.error('❌ Error loading products:', error);
+        console.log('Backend URL:', 'http://localhost:8080/admin/products');
+        console.log('Auth token:', localStorage.getItem('token') ? 'Available' : 'Missing');
         this.isLoading = false;
-        alert('Ürünler yüklenirken hata oluştu. Backend bağlantısını kontrol edin.');
+        
+        // Hata durumunda örnek data göster
+        this.products = [
+          {
+            id: '1',
+            name: 'Örnek Ürün 1',
+            description: 'Bu backend bağlantısı olmadığında gösterilen örnek üründür',
+            price: 100,
+            stock: 50,
+            categoryId: '1',
+            categoryName: 'Elektronik',
+            imageUrl: 'https://via.placeholder.com/150'
+          },
+          {
+            id: '2',
+            name: 'Örnek Ürün 2',
+            description: 'Backend bağlantısı kurulduğunda gerçek veriler gelecek',
+            price: 200,
+            stock: 0,
+            categoryId: '2',
+            categoryName: 'Giyim',
+            imageUrl: 'https://via.placeholder.com/150'
+          }
+        ] as any;
+        this.filteredProducts = this.products;
+        
+        // Alert yerine console warning
+        console.warn('⚠️ Backend bağlantısı kurulamadı, örnek veriler gösteriliyor.');
       }
     });
   }

@@ -8,6 +8,7 @@ import { AdminComponent } from './pages/admin/admin';
 import { AdminProductsComponent } from './pages/admin/products/admin-products';
 import { AdminCategoriesComponent } from './pages/admin/categories/admin-categories';
 import { AdminUsersComponent } from './pages/admin/users/admin-users';
+import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
     {path: '', component: Home},
@@ -17,8 +18,9 @@ export const routes: Routes = [
     {path: 'register', component: RegisterComponent},
     {
         path: 'admin',
-        component: AdminComponent,
+        canActivate: [AdminGuard],
         children: [
+            {path: '', component: AdminComponent}, // Dashboard
             {path: 'products', component: AdminProductsComponent},
             {path: 'categories', component: AdminCategoriesComponent},
             {path: 'users', component: AdminUsersComponent}

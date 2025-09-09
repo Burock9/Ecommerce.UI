@@ -1,136 +1,88 @@
-<div class="admin-layout" *ngIf="isAdmin()">
-  <!-- Sidebar -->
-  <div class="admin-sidebar">
-    <div class="sidebar-header">
-      <h3><i class="fas fa-cog me-2"></i>Admin Panel</h3>
-      <p>Hoş geldin, {{ currentUser?.username }}</p>
-    </div>
-    
-    <nav class="sidebar-nav">
-      <ul>
-        <li>
-          <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-            <i class="fas fa-chart-bar me-2"></i>Dashboard
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/products" routerLinkActive="active">
-            <i class="fas fa-box me-2"></i>Ürünler
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/categories" routerLinkActive="active">
-            <i class="fas fa-tags me-2"></i>Kategoriler
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/users" routerLinkActive="active">
-            <i class="fas fa-users me-2"></i>Kullanıcılar
-          </a>
-        </li>
-        <li>
-          <a routerLink="/" class="back-to-site">
-            <i class="fas fa-arrow-left me-2"></i>Siteye Dön
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-
-  <!-- Main Content -->
-  <div class="admin-content">
-    
-    <!-- Dashboard Content - Only show on dashboard route -->
-    <div *ngIf="isDashboard()">
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-section">
-        <i class="fas fa-spinner fa-spin"></i>
-        <span>İstatistikler yükleniyor...</span>
+<!-- Dashboard Content Only -->
+<div class="dashboard-content">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1>Dashboard</h1>
+        <p>Admin panel ana sayfası</p>
       </div>
-
-      <!-- Dashboard Stats -->
-      <div class="dashboard-stats" *ngIf="!loading">
-        <div class="stat-card clickable" (click)="navigateToProducts()">
-          <div class="stat-icon products">
-            <i class="fas fa-box"></i>
-          </div>
-          <div class="stat-info">
-            <h3>{{ stats.totalProducts }}</h3>
-            <p>Toplam Ürün</p>
-          </div>
-          <div class="stat-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
-        </div>
-        
-        <div class="stat-card clickable" (click)="navigateToCategories()">
-          <div class="stat-icon categories">
-            <i class="fas fa-tags"></i>
-          </div>
-          <div class="stat-info">
-            <h3>{{ stats.totalCategories }}</h3>
-            <p>Toplam Kategori</p>
-          </div>
-          <div class="stat-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
-        </div>
-        
-        <div class="stat-card clickable" (click)="navigateToUsers()">
-          <div class="stat-icon users">
-            <i class="fas fa-users"></i>
-          </div>
-          <div class="stat-info">
-            <h3>{{ stats.totalUsers }}</h3>
-            <p>Toplam Kullanıcı</p>
-          </div>
-          <div class="stat-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
-        </div>
-
-        <div class="stat-card warning" (click)="navigateToProducts()">
-          <div class="stat-icon stock">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <div class="stat-info">
-            <h3>{{ stats.outOfStockProducts }}</h3>
-            <p>Stokta Olmayan</p>
-          </div>
-          <div class="stat-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
-        </div>
-      </div>    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <h4>Hızlı İşlemler</h4>
-      <div class="action-buttons">
-        <a class="btn btn-primary" routerLink="/admin/products">
-          <i class="fas fa-plus me-2"></i>Yeni Ürün
-        </a>
-        <a class="btn btn-success" routerLink="/admin/categories">
-          <i class="fas fa-plus me-2"></i>Yeni Kategori
-        </a>
-        <a class="btn btn-info" routerLink="/admin/products">
-          <i class="fas fa-list me-2"></i>Ürünleri Görüntüle
-        </a>
+      <div class="header-right">
+        <small>Son güncelleme: {{ getCurrentDate() }}</small>
       </div>
     </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-section">
+    <div class="spinner-border text-primary"></div>
+    <p>İstatistikler yükleniyor...</p>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <section class="stats-grid" *ngIf="!loading">
+    <div class="stat-card" (click)="navigateToProducts()">
+      <div class="stat-icon bg-primary">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.totalProducts }}</h3>
+        <p>Toplam Ürün</p>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+    
+    <div class="stat-card" (click)="navigateToCategories()">
+      <div class="stat-icon bg-success">
+        <i class="fas fa-tags"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.totalCategories }}</h3>
+        <p>Toplam Kategori</p>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+    
+    <div class="stat-card" (click)="navigateToUsers()">
+      <div class="stat-icon bg-info">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.totalUsers }}</h3>
+        <p>Toplam Kullanıcı</p>
+      </div>
+      <i class="fas fa-arrow-right"></i>
     </div>
 
-    <!-- Router Outlet for Sub Pages -->
-    <div class="admin-router">
-      <router-outlet></router-outlet>
+    <div class="stat-card" (click)="navigateToProducts()">
+      <div class="stat-icon bg-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.outOfStockProducts }}</h3>
+        <p>Stokta Olmayan</p>
+      </div>
+      <i class="fas fa-arrow-right"></i>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- Access Denied -->
-<div class="access-denied" *ngIf="!isAdmin()">
-  <div class="denied-content">
-    <i class="fas fa-lock"></i>
-    <h2>Erişim Reddedildi</h2>
-    <p>Bu sayfaya erişim için admin yetkisi gereklidir.</p>
-    <button class="btn btn-primary" routerLink="/">Anasayfaya Dön</button>
-  </div>
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <div class="section-card">
+      <div class="section-header">
+        <h5><i class="fas fa-bolt"></i>Hızlı İşlemler</h5>
+      </div>
+      <div class="actions-grid">
+        <button (click)="onAddProduct()" class="action-button primary">
+          <i class="fas fa-plus"></i>Yeni Ürün Ekle
+        </button>
+        <button (click)="onAddCategory()" class="action-button success">
+          <i class="fas fa-plus"></i>Yeni Kategori Ekle
+        </button>
+        <button (click)="onViewProducts()" class="action-button info">
+          <i class="fas fa-list"></i>Ürünleri Görüntüle
+        </button>
+      </div>
+    </div>
+  </section>
 </div>

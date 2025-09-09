@@ -1,18 +1,24 @@
 <div class="d-flex flex-column min-vh-100">
-  <!-- Header -->
-  <app-header></app-header>
+  <!-- Admin Layout için ayrı template -->
+  <app-admin-layout *ngIf="isAdminRoute()"></app-admin-layout>
   
-  <!-- Categories Bar - Hide on admin pages -->
-  <app-categories-bar *ngIf="!isAdminRoute()"></app-categories-bar>
-  
-  <!-- Main Content -->
-  <main class="flex-grow-1">
-    <div class="container-fluid p-0">
-      <!-- Router Outlet - Sayfa içerikleri burada gösterilecek -->
-      <router-outlet></router-outlet>
-    </div>
-  </main>
-  
-  <!-- Footer -->
-  <app-footer></app-footer>
+  <!-- Normal sayfalar için layout (Header + Footer) -->
+  <div *ngIf="!isAdminRoute()" class="d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <app-header></app-header>
+    
+    <!-- Categories Bar -->
+    <app-categories-bar></app-categories-bar>
+    
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+      <div class="container-fluid p-0">
+        <!-- Router Outlet - Sayfa içerikleri burada gösterilecek -->
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
 </div>

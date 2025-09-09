@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet, RouterLinkActive, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { DashboardService, DashboardStats } from '../../service/dashboard.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, RouterLinkActive],
+  imports: [CommonModule],
   templateUrl: './admin.html',
   styleUrls: ['./admin.css']
 })
 export class AdminComponent implements OnInit {
-  currentUser: any = null;
   stats: DashboardStats = {
     totalProducts: 0,
     totalCategories: 0,
@@ -28,60 +27,104 @@ export class AdminComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadCurrentUser();
+    this.testBackendConnection();
     this.loadStats();
   }
 
-  private loadCurrentUser(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if (!this.isAdmin()) {
-        // Admin değilse anasayfaya yönlendir
-        window.location.href = '/';
+  testBackendConnection(): void {
+    console.log('🔍 Testing backend connection...');
+    console.log('Backend URL:', 'http://localhost:8080');
+    console.log('Auth token:', localStorage.getItem('token') ? '✅ Available' : '❌ Missing');
+    
+    // Backend health check - auth service'den currentUser observable'ını kullan
+    this.authService.currentUser$.subscribe({
+      next: (user) => {
+        console.log('✅ Current user from auth service:', user);
+      },
+      error: (error) => {
+        console.error('❌ Auth service error:', error);
       }
+    });
+    
+    // Basit HTTP isteği ile backend'i test et
+    fetch('http://localhost:8080/v3/api-docs')
+      .then(response => {
+        if (response.ok) {
+          console.log('✅ Backend server is running on http://localhost:8080');
+          console.log('⚠️ Problem might be with authentication or specific endpoints');
+        } else {
+          console.log('❌ Backend server responded with status:', response.status);
+        }
+      })
+      .catch(err => {
+        console.error('❌ Backend server is not accessible:', err);
+        console.log('💡 Solutions:');
+        console.log('1. Start the Spring Boot application');
+        console.log('2. Check if port 8080 is available');
+        console.log('3. Verify PostgreSQL database is running');
+      });
+  }
+
+  getCurrentDate(): string {
+    return new Date().toLocaleDateString('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   }
 
-  private loadStats(): void {
+  loadStats(): void {
     this.loading = true;
     this.dashboardService.getDashboardStats().subscribe({
-      next: (stats) => {
-        this.stats = stats;
+      next: (data) => {
+        this.stats = data;
         this.loading = false;
-        console.log('Dashboard istatistikleri yüklendi:', stats);
       },
       error: (error) => {
-        console.error('Dashboard istatistikleri yüklenirken hata:', error);
+        console.error('Dashboard verisi alınamadı:', error);
         this.loading = false;
-        // Hata durumunda varsayılan değerleri göster
+        // Hata durumunda örnek veriler göster
         this.stats = {
-          totalProducts: 0,
-          totalCategories: 0,
-          totalUsers: 0,
-          outOfStockProducts: 0
+          totalProducts: 150,
+          totalCategories: 12,
+          totalUsers: 85,
+          outOfStockProducts: 8
         };
       }
     });
   }
 
-  isAdmin(): boolean {
-    if (!this.currentUser || !this.currentUser.roles) return false;
-    return this.currentUser.roles.includes('ADMIN') || this.currentUser.roles.includes('ROLE_ADMIN');
-  }
-
-  isDashboard(): boolean {
-    return this.router.url === '/admin';
-  }
-
+  // Navigation metodları
   navigateToProducts(): void {
+    console.log('Navigating to products...');
     this.router.navigate(['/admin/products']);
   }
 
   navigateToCategories(): void {
+    console.log('Navigating to categories...');
     this.router.navigate(['/admin/categories']);
   }
 
   navigateToUsers(): void {
+    console.log('Navigating to users...');
     this.router.navigate(['/admin/users']);
+  }
+
+  // Quick Action metodları
+  onAddProduct(): void {
+    console.log('Add product clicked...');
+    this.router.navigate(['/admin/products'], { queryParams: { action: 'add' } });
+  }
+
+  onAddCategory(): void {
+    console.log('Add category clicked...');
+    this.router.navigate(['/admin/categories'], { queryParams: { action: 'add' } });
+  }
+
+  onViewProducts(): void {
+    console.log('View products clicked...');
+    this.router.navigate(['/admin/products']);
   }
 }

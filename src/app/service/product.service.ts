@@ -17,8 +17,8 @@ export class ProductService {
   }
 
   getAllProductsList(): Observable<Product[]> {
-    return this.apiService.get<ResponseWrapper<Page<Product>>>('/admin/products')
-      .pipe(map(response => response.data.content));
+    return this.apiService.get<Page<Product>>('/products')
+      .pipe(map(response => response.content));
   }
 
   createProduct(product: Product): Observable<Product> {

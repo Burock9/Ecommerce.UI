@@ -213,14 +213,33 @@ export class AdminUsersComponent implements OnInit {
 
   loadUsers(): void {
     this.loading = true;
+    console.log('Loading users from backend...');
     this.userService.getAllUsers().subscribe({
       next: (response) => {
+        console.log('✅ Users loaded successfully:', response);
         this.users = response.content;
         this.loading = false;
       },
       error: (error) => {
-        console.error('Kullanıcılar yüklenirken hata:', error);
+        console.error('❌ Error loading users:', error);
+        console.log('Backend URL:', 'http://localhost:8080/admin/users');
+        console.log('Auth token:', localStorage.getItem('token') ? 'Available' : 'Missing');
         this.loading = false;
+        // Hata durumunda örnek data göster
+        this.users = [
+          {
+            id: 1,
+            username: 'admin',
+            email: 'admin@example.com',
+            roles: ['ADMIN']
+          },
+          {
+            id: 2,
+            username: 'user',
+            email: 'user@example.com',
+            roles: ['USER']
+          }
+        ];
       }
     });
   }

@@ -35,10 +35,11 @@
                     </div>
                   </div>
                   <div class="feature-list" *ngIf="i !== 0">
-                    <div class="feature-item" *ngFor="let feature of getCategoryFeatures(category.name)">
+                    <!--<div class="feature-item" *ngFor="let feature of getCategoryFeatures(category.name)">
                       <i class="fas fa-check-circle"></i>
                       <span>{{feature}}</span>
-                    </div>
+                    </div>-->
+                    
                   </div>
                   <button class="btn btn-slide-cta" (click)="onCategoryClick(category)">
                     <i class="{{getCategoryIcon(category.name)}} me-2"></i>{{category.name}} Keşfet
@@ -46,11 +47,12 @@
                 </div>
               </div>
               <div class="col-lg-6">
+                <!-- -->
                 <div class="slide-image-container">
                   <img [src]="getCategorySlideImage(category.name)" 
                        [alt]="category.name" 
                        class="slide-image">
-                  <div class="floating-element element-1">
+                  <!--<div class="floating-element element-1">
                     <i class="fas fa-shipping-fast"></i>
                     <span>Ücretsiz Kargo</span>
                   </div>
@@ -58,6 +60,8 @@
                     <i class="fas fa-shield-alt"></i>
                     <span>Güvenli Ödeme</span>
                   </div>
+                  -->
+                  
                 </div>
               </div>
             </div>
@@ -213,7 +217,7 @@
             <p class="product-description">{{product.description}}</p>
             
             <div class="product-price-container">
-              <span class="product-price">{{product.price | currency:'TRY':'symbol':'1.2-2'}}</span>
+              <span class="product-price">{{product.price | number:'1.0-0'}} ₺</span>
               <small class="text-muted d-block">{{product.categoryName}}</small>
             </div>
             
@@ -262,9 +266,9 @@
             
             <div class="product-price-container">
               <div class="price-section">
-                <span class="current-price">{{product.price | currency:'TRY':'symbol':'1.0-0'}}</span>
+                <span class="current-price">{{product.price | number:'1.0-0'}} ₺</span>
                 <span class="original-price" *ngIf="product.originalPrice">
-                  {{product.originalPrice | currency:'TRY':'symbol':'1.0-0'}}
+                  {{product.originalPrice | number:'1.0-0'}} ₺
                 </span>
               </div>
               <div class="discount-badge" *ngIf="product.originalPrice">

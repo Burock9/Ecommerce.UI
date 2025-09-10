@@ -1,0 +1,70 @@
+/* Mobile Responsive for Dark Product Cards */
+@media (max-width: 767px) {
+  .products-section h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+
+  .product-card-modern {
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+  }
+
+  .product-image-container {
+    height: 220px;
+  }
+
+  .product-badge {
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    font-size: 0.7rem;
+  }
+
+  .product-actions {
+    padding: 16px;
+  }
+
+  .product-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .product-content {
+    padding: 20px 16px;
+  }
+
+  .product-title {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .product-description {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+
+  .current-price {
+    font-size: 1.2rem;
+  }
+
+  .btn-add-cart {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}
+
+/* Tablet Responsive */
+@media (min-width: 768px) and (max-width: 991px) {
+  .product-card-modern {
+    backdrop-filter: blur(12px);
+  }
+
+  .product-image-container {
+    height: 240px;
+  }
+
+  .product-content {
+    padding: 24px 20px;
+  }
+}

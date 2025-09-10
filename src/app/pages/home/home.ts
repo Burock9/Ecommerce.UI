@@ -247,7 +247,9 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       'Elektronik': 'Elektronik Dünyaya Adım',
       'Telefon': 'İletişimin Zirvesi',
       'Laptop': 'Mobil Güç Merkezi',
+      'Oyun Konsolları': 'Gerçek Oyun Deneyimi',
       'Moda': 'Stilin Adresi',
+      'Bakım Ürünleri': 'Kendine İyi Bak',
       'Giyim': 'Tarzını Keşfet',
       'Ayakkabı': 'Her Adımda Stil',
       'Ev': 'Yaşam Alanın',
@@ -277,10 +279,12 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   getCategorySlideSubtitle(categoryName: string): string {
     const subtitleMap: { [key: string]: string } = {
       'Elektronik': 'Hayatını Kolaylaştır',
-      'Teknoloji': 'Performansın Zirvesi',
+      'Teknoloji': 'En Yenisi',
       'Telefon': 'Her An Bağlantıda',
       'Laptop': 'Özgürce Çalış',
+      'Oyun Konsolları': 'Burada Başlıyor',
       'Moda': 'Kendini İfade Et',
+      'Bakım Ürünleri': 'Farkı Hisset',
       'Giyim': 'Konforlu Zarafet',
       'Ayakkabı': 'Konfor ve Şıklık',
       'Ev': 'Konforun Merkezi',
@@ -309,10 +313,12 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   getCategorySlideDescription(categoryName: string): string {
     const descMap: { [key: string]: string } = {
-      'Elektronik': 'En yeni teknoloji ürünleri, akıllı cihazlar ve inovatif çözümler ile dijital hayatınızı zenginleştirin.',
+      'Elektronik': 'En yeni akıllı cihazlar, yüksek performanslı bilgisayarlar ve hayatını kolaylaştıran elektronik ürünler seni bekliyor.',
+      'Oyun Konsolları': 'En popüler konsollar, güçlü aksesuarlar ve sınırsız eğlence için ihtiyacın olan her şey burada.',
       'Bilgisayar': 'Güçlü işlemciler, yüksek performans ve son teknoloji özellikler ile çalışma deneyiminizi üst seviyeye taşıyın.',
-      'Teknoloji': 'Son teknoloji akıllı telefonlar, güçlü bilgisayarlar ile her an bağlantıda kalın.',
+      'Teknoloji': 'Geleceğin teknolojilerini bugünden deneyimle. Akıllı cihazlar, yenilikçi çözümler ve daha fazlası senin için seçildi.',
       'Moda': 'En trend parçalar, dünya markalarından seçkin koleksiyonlar ve zamansız şıklık bir arada.',
+      'Bakım Ürünleri': 'Kişisel bakım ürünleri, sağlık çözümleri ve günlük ihtiyaçların için en güvenilir markalar bir arada.',
       'Ev': 'Evinizi daha konforlu, daha şık ve daha fonksiyonel hale getiren özel ürünler.',
       'Spor': 'Sağlıklı yaşam için gereken tüm spor ekipmanları ve fitness ürünleri burada.'
     };
@@ -325,9 +331,8 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     
     return `${categoryName} kategorisinde en kaliteli ürünler, uygun fiyatlar ve hızlı teslimat ile mükemmel alışveriş deneyimi.`;
   }
-
-  getCategoryFeatures(categoryName: string): string[] {
-    const featureMap: { [key: string]: string[] } = {
+  /*
+  const featureMap: { [key: string]: string[] } = {
       'Elektronik': [
         'Son teknoloji ürünler',
         'Resmi distribütör garantisi', 
@@ -371,7 +376,12 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       'Hızlı ve güvenli teslimat',
       'Müşteri memnuniyeti öncelik'
     ];
+
+    getCategoryFeatures(categoryName: string): string[] {
+    
   }
+  */
+  
 
   getCategorySlideImage(categoryName: string): string {
     const imageMap: { [key: string]: string } = {
@@ -379,7 +389,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       'Teknoloji': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
       'Telefon': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=400&fit=crop',
       'Laptop': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=400&fit=crop',
-      'Moda': 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&h=400&fit=crop',
+      'Bakım Ürünleri': 'https://www.makyajtrendi.com/Content/ContentImage/637617671050461671-2456491_810x458.jpg',
       'Giyim': 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600&h=400&fit=crop',
       'Ayakkabı': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=400&fit=crop',
       'Ev': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',

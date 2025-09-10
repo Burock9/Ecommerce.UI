@@ -92,7 +92,7 @@
           <p class="product-description text-muted">{{ product.description }}</p>
 
           <div class="product-price mb-3">
-            <span class="price-current">{{ product.price | currency:'TRY':'symbol':'1.2-2' }}</span>
+            <span class="price-current">{{ product.price | number:'1.0-0' }}₺</span>
           </div>
 
           <div class="product-actions">

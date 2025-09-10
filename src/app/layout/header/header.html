@@ -48,10 +48,9 @@
         </ul>
       </div>
       
-      <!-- Center Section: Search -->
-      <div class="navbar-center d-none d-md-block">
-        <div class="search-container">
-          <div class="search-input-group">
+      <!-- Center Section: Search
+       
+      <div class="search-input-group">
             <i class="fas fa-search search-icon"></i>
             <input type="text" class="search-input" placeholder="Ürün, marka veya kategori ara...">
             <div class="search-categories">
@@ -66,6 +65,10 @@
               <i class="fas fa-search"></i>
             </button>
           </div>
+      -->
+      <div class="navbar-center d-none d-md-block">
+        <div class="search-container">
+          
           
           <!-- Search Suggestions (Hidden by default) -->
           <div class="search-suggestions d-none">
@@ -102,14 +105,26 @@
         <!-- User Actions -->
         <div class="user-actions">
           
-          <!-- Auth Buttons - Not Logged In -->
-          <div class="auth-buttons" *ngIf="!currentUser">
-            <a routerLink="/login" class="btn btn-outline-primary me-2">
-              <i class="fas fa-sign-in-alt me-1"></i>Giriş
-            </a>
-            <a routerLink="/register" class="btn btn-primary">
-              <i class="fas fa-user-plus me-1"></i>Kayıt
-            </a>
+          <!-- Auth Dropdown - Not Logged In -->
+          <div class="auth-dropdown" *ngIf="!currentUser">
+            <div class="dropdown auth-hover-dropdown">
+              <button class="btn btn-primary auth-dropdown-btn" type="button" id="authDropdown">
+                <i class="fas fa-user me-1"></i>Giriş Yap
+                <i class="fas fa-chevron-down ms-1"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end auth-dropdown-menu">
+                <li>
+                  <a class="dropdown-item" routerLink="/login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" routerLink="/register">
+                    <i class="fas fa-user-plus me-2"></i>Üye Ol
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <!-- User Info - Logged In -->
@@ -157,7 +172,7 @@
           <!-- Shopping Cart -->
           <button class="action-btn cart-btn" title="Sepetim">
             <i class="fas fa-shopping-cart"></i>
-            <span class="badge-count cart-count">2</span>
+            <!--<span class="badge-count cart-count">2</span>-->
             <span class="d-none d-lg-inline ms-1">Sepetim</span>
           </button>
           

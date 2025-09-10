@@ -197,15 +197,17 @@
               </button>
             </div>
           </div>
-          
-          <div class="product-content">
-            <div class="product-rating mb-2">
+          <!--
+          <div class="product-rating mb-2">
               <div class="stars">
                 <i class="fas fa-star active" *ngFor="let star of [1,2,3,4]"></i>
                 <i class="fas fa-star"></i>
               </div>
               <span class="rating-text">({{product.stock}} adet)</span>
             </div>
+          -->
+          <div class="product-content">
+            
             
             <h5 class="product-title">{{product.name}}</h5>
             <p class="product-description">{{product.description}}</p>
@@ -244,6 +246,7 @@
           </div>
           
           <div class="product-content">
+            <!-- 
             <div class="product-rating mb-2">
               <div class="stars">
                 <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]" 
@@ -251,6 +254,8 @@
               </div>
               <span class="rating-text">({{product.reviewCount}} değerlendirme)</span>
             </div>
+            
+            -->
             
             <h5 class="product-title">{{product.name}}</h5>
             <p class="product-description">{{product.description}}</p>

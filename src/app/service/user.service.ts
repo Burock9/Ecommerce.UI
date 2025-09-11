@@ -13,6 +13,10 @@ export class UserService {
   constructor(private apiService: ApiService) { }
 
   getAllUsers(page: number = 0, size: number = 20): Observable<Page<User>> {
+    console.log('🔍 UserService: getAllUsers called');
+    console.log('📡 Making request to: /admin/users');
+    console.log('📄 Page:', page, 'Size:', size);
+    
     return this.apiService.get<Page<User>>('/admin/users', { page, size });
   }
 

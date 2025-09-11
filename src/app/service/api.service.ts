@@ -26,6 +26,9 @@ export class ApiService {
     }
 
     get<T>(endpoint: string, params?: any): Observable<T> {
+        console.log('🌐 ApiService GET:', this.baseUrl + endpoint);
+        console.log('🔑 Token available:', localStorage.getItem('token') ? 'Yes' : 'No');
+        
         let httpParams = new HttpParams();
         if (params) {
             Object.keys(params).forEach(key => {
@@ -34,10 +37,21 @@ export class ApiService {
                 }
             });
         }
-        return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
+        
+        console.log('📨 Request params:', params);
+        
+        const request = this.http.get<T>(`${this.baseUrl}${endpoint}`, {
           headers: this.getHeaders(),
           params: httpParams
-      });
+        });
+
+        // Response'u intercept edelim
+        request.subscribe({
+          next: (response) => console.log('✅ API Response:', response),
+          error: (error) => console.error('❌ API Error:', error)
+        });
+
+        return request;
     }
 
     

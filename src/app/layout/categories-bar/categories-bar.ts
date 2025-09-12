@@ -62,7 +62,10 @@ export class CategoriesBar implements OnInit {
     this.categoryService.getAllCategories(0, 10).subscribe({
       next: (response: Page<CategoryIndex>) => {
         this.categories = response.content;
+        // Kategorileri ID'ye göre sırala
+        this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
         this.loading = false;
+        console.log('✅ Ana sayfa kategorileri yüklendi ve sıralandı:', this.categories.length);
       },
       error: (error) => {
         this.error = 'Kategoriler yüklenirken hata oluştu';
@@ -82,6 +85,8 @@ export class CategoriesBar implements OnInit {
       { id: '4', name: 'Spor', description: 'Spor ürünleri' },
       { id: '5', name: 'Kitap', description: 'Kitaplar' }
     ];
+    // Mock kategoriler de ID'ye göre sıralı (zaten sıralı ama garantiye alıyoruz)
+    this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
     this.loading = false;
   }
 

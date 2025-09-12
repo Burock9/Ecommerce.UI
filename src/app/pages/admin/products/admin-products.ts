@@ -57,7 +57,7 @@ import { Product, ProductIndex } from '../../../model/product.model';
                 <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
               </div>
               <div class="table-cell name-col">{{ product.name }}</div>
-              <div class="table-cell description-col">{{ product.description }}</div>
+              <div class="table-cell description-col">{{ product.description || 'Açıklama yok' }}</div>
               <div class="table-cell price-col">{{ product.price }}₺</div>
               <div class="table-cell stock-col">
                 <span class="stock-badge" [class.low-stock]="product.stock < 10">
@@ -363,7 +363,7 @@ import { Product, ProductIndex } from '../../../model/product.model';
 
     .table-container {
       display: grid;
-      grid-template-columns: 70px 1fr 1.5fr 100px 80px 110px 150px;
+      grid-template-columns: 70px 1fr 1fr 100px 80px 200px 150px;
       gap: 0;
       width: 100%;
     }
@@ -419,7 +419,6 @@ import { Product, ProductIndex } from '../../../model/product.model';
 
     .description-col {
       justify-content: flex-start;
-      color: #cbd5e0;
     }
 
     .price-col {

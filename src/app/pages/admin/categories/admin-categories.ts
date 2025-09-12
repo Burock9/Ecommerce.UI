@@ -317,7 +317,6 @@ import { CategoryIndex } from '../../../model/category.model';
 
     .description-col {
       justify-content: flex-start;
-      color: #cbd5e0;
     }
 
     .count-col, .actions-col {
@@ -515,9 +514,11 @@ export class AdminCategoriesComponent implements OnInit {
     this.categoryService.getAllCategoriesWithProductCount(0, 100).subscribe({
       next: (response: any) => {
         this.categories = response.content || [];
+        // Kategorileri ID'ye göre sırala
+        this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
         this.filteredCategories = this.categories;
         this.isLoading = false;
-        console.log('✅ Admin kategoriler başarıyla yüklendi:', this.categories.length);
+        console.log('✅ Admin kategoriler başarıyla yüklendi ve sıralandı:', this.categories.length);
         console.log('📊 Kategori verileri:', this.categories);
       },
       error: (error: any) => {
@@ -532,7 +533,9 @@ export class AdminCategoriesComponent implements OnInit {
     this.categoryService.getAllCategories(0, 100).subscribe({
       next: (response: any) => {
         this.categories = response.content || [];
-        console.log('📋 Kategoriler yüklendi, ürün sayıları getiriliyor...');
+        // Kategorileri ID'ye göre sırala
+        this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        console.log('📋 Kategoriler yüklendi ve sıralandı, ürün sayıları getiriliyor...');
         
         // Her kategori için ürün sayısını ayrı ayrı çek
         this.loadProductCountsForCategories();
@@ -567,9 +570,11 @@ export class AdminCategoriesComponent implements OnInit {
           console.log(`✅ ${category.name} kategorisi: ${count} ürün`);
           
           if (completedRequests === totalRequests) {
+            // Ürün sayıları yüklendikten sonra tekrar ID'ye göre sırala
+            this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             this.filteredCategories = this.categories;
             this.isLoading = false;
-            console.log('✅ Tüm ürün sayıları başarıyla yüklendi:', this.categories);
+            console.log('✅ Tüm ürün sayıları başarıyla yüklendi ve sıralandı:', this.categories);
           }
         },
         error: (error: any) => {
@@ -578,9 +583,11 @@ export class AdminCategoriesComponent implements OnInit {
           completedRequests++;
           
           if (completedRequests === totalRequests) {
+            // Mock verilerle de ID'ye göre sırala
+            this.categories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             this.filteredCategories = this.categories;
             this.isLoading = false;
-            console.log('⚠️ Ürün sayıları tamamlandı (bazıları mock veri ile)');
+            console.log('⚠️ Ürün sayıları tamamlandı ve sıralandı (bazıları mock veri ile)');
           }
         }
       });
@@ -604,7 +611,7 @@ export class AdminCategoriesComponent implements OnInit {
 
   searchCategories(): void {
     if (!this.searchTerm.trim()) {
-      this.filteredCategories = this.categories;
+      this.filteredCategories = [...this.categories]; // Orijinal sıralamayı koru
       return;
     }
 
@@ -612,6 +619,9 @@ export class AdminCategoriesComponent implements OnInit {
       category.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       (category.description && category.description.toLowerCase().includes(this.searchTerm.toLowerCase()))
     );
+    
+    // Arama sonuçlarını da ID'ye göre sırala
+    this.filteredCategories.sort((a, b) => parseInt(a.id) - parseInt(b.id));
   }
 
   openAddModal(): void {

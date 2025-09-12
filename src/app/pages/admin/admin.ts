@@ -77,20 +77,23 @@ export class AdminComponent implements OnInit {
 
   loadStats(): void {
     this.loading = true;
+    console.log('📊 Loading dashboard stats...');
+    
     this.dashboardService.getDashboardStats().subscribe({
       next: (data) => {
+        console.log('✅ Dashboard stats loaded:', data);
         this.stats = data;
         this.loading = false;
       },
       error: (error) => {
-        console.error('Dashboard verisi alınamadı:', error);
+        console.error('❌ Dashboard verisi alınamadı:', error);
         this.loading = false;
-        // Hata durumunda örnek veriler göster
+        // Hata durumunda varsayılan değerler göster
         this.stats = {
-          totalProducts: 150,
-          totalCategories: 12,
-          totalUsers: 85,
-          outOfStockProducts: 8
+          totalProducts: 0,
+          totalCategories: 0,
+          totalUsers: 0,
+          outOfStockProducts: 0
         };
       }
     });

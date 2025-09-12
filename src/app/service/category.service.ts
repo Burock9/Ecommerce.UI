@@ -12,7 +12,20 @@ export class CategoryService {
   constructor(private apiService: ApiService) { }
 
   getAllCategories(page: number = 0, size: number = 20): Observable<Page<CategoryIndex>> {
-    return this.apiService.get<Page<CategoryIndex>>('/categories', { page, size });
+    // Backend'den ID'ye göre sıralı veri almaya çalış
+    return this.apiService.get<Page<CategoryIndex>>('/categories', { 
+      page, 
+      size, 
+      sort: 'id,asc' // ID'ye göre artan sıralama
+    }).pipe(
+      map(response => {
+        // Backend sort desteklemezse frontend'de sırala
+        if (response.content) {
+          response.content.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        }
+        return response;
+      })
+    );
   }
 
   getCategoryById(id: number): Observable<CategoryIndex> {
@@ -24,7 +37,20 @@ export class CategoryService {
   }
 
   searchCategories(name: string, page: number = 0, size: number = 20): Observable<Page<CategoryIndex>> {
-    return this.apiService.get<Page<CategoryIndex>>('/categories/search', { name, page, size });
+    return this.apiService.get<Page<CategoryIndex>>('/categories/search', { 
+      name, 
+      page, 
+      size, 
+      sort: 'id,asc' // ID'ye göre artan sıralama
+    }).pipe(
+      map(response => {
+        // Backend sort desteklemezse frontend'de sırala
+        if (response.content) {
+          response.content.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        }
+        return response;
+      })
+    );
   }
 
   getCategoryProductCount(categoryId: string): Observable<number> {
@@ -36,7 +62,20 @@ export class CategoryService {
   }
 
   getAllCategoriesWithProductCount(page: number = 0, size: number = 20): Observable<Page<CategoryIndex>> {
-    return this.apiService.get<Page<CategoryIndex>>('/admin/categories/with-count', { page, size });
+    // Admin endpoint'inde de ID'ye göre sıralama iste
+    return this.apiService.get<Page<CategoryIndex>>('/admin/categories/with-count', { 
+      page, 
+      size, 
+      sort: 'id,asc' // ID'ye göre artan sıralama
+    }).pipe(
+      map(response => {
+        // Backend sort desteklemezse frontend'de sırala
+        if (response.content) {
+          response.content.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        }
+        return response;
+      })
+    );
   }
 
   // Public endpoint fallback - artık gerek yok ama backup olarak kalsın

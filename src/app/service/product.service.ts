@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { Product, ProductIndex } from '../model/product.model';
 import { Page, ResponseWrapper } from '../model/response.model';
@@ -22,8 +22,21 @@ export class ProductService {
   }
 
   createProduct(product: Product): Observable<Product> {
+    console.log('🛍️ ProductService: createProduct called');
+    console.log('📤 Sending product data:');
+    console.log(JSON.stringify(product, null, 2));
+    
     return this.apiService.post<ResponseWrapper<Product>>('/admin/products', product)
-      .pipe(map(response => response.data));
+      .pipe(
+        map(response => {
+          console.log('✅ ProductService: Product created successfully:', response);
+          return response.data;
+        }),
+        catchError((error: any) => {
+          console.error('❌ ProductService: Error creating product:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   updateProduct(id: number, product: Product): Observable<Product> {

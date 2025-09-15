@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../service/product.service';
+import { CategoryService } from '../../../service/category.service';
 import { Product, ProductIndex } from '../../../model/product.model';
 
 @Component({
@@ -12,82 +14,70 @@ import { Product, ProductIndex } from '../../../model/product.model';
     <div class="admin-products">
       <div class="layout-container">
         <div class="page-header">
-          <h2><i class="fas fa-box me-2"></i>Ürün Yönetimi</h2>
-          <button class="btn btn-primary" (click)="openAddModal()">
-            <i class="fas fa-plus me-1"></i>Yeni Ürün Ekle
-          </button>
+          <h2><i class="fas fa-box"></i> Ürün Yönetimi</h2>
+          <button class="btn-primary" (click)="openAddModal()">Yeni Ürün Ekle</button>
         </div>
 
-        <!-- Search Bar -->
         <div class="search-section">
           <div class="search-box">
             <i class="fas fa-search"></i>
-            <input 
-              type="text" 
-              class="form-control" 
-              placeholder="Ürün ara..." 
-              [(ngModel)]="searchTerm" 
-              (input)="searchProducts()">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ürün ara..."
+              [(ngModel)]="searchTerm"
+              (input)="searchProducts()"
+            />
           </div>
         </div>
 
-        <!-- Loading -->
-        <div class="loading-spinner" *ngIf="isLoading">
-          <i class="fas fa-spinner fa-spin"></i>
-          <span>Ürünler yükleniyor...</span>
-        </div>
-
-        <!-- Products Table -->
-        <div class="products-table" *ngIf="!isLoading">
+        <div class="products-table">
           <div class="table-container">
-            <!-- Header -->
             <div class="table-header">
-              <div class="header-cell image-col">Resim</div>
-              <div class="header-cell name-col">Ürün Adı</div>
-              <div class="header-cell description-col">Açıklama</div>
-              <div class="header-cell price-col">Fiyat</div>
-              <div class="header-cell stock-col">Stok</div>
-              <div class="header-cell category-col">Kategori</div>
-              <div class="header-cell actions-col">İşlemler</div>
+              <div class="header-cell">Resim</div>
+              <div class="header-cell">Ürün</div>
+              <div class="header-cell">Açıklama</div>
+              <div class="header-cell">Fiyat</div>
+              <div class="header-cell">Stok</div>
+              <div class="header-cell">Kategori</div>
+              <div class="header-cell">İşlemler</div>
             </div>
-            
-            <!-- Rows -->
-            <div class="table-row" *ngFor="let product of filteredProducts">
-              <div class="table-cell image-col">
-                <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
-              </div>
-              <div class="table-cell name-col">{{ product.name }}</div>
-              <div class="table-cell description-col">{{ product.description || 'Açıklama yok' }}</div>
-              <div class="table-cell price-col">{{ product.price }}₺</div>
-              <div class="table-cell stock-col">
-                <span class="stock-badge" [class.low-stock]="product.stock < 10">
-                  {{ product.stock }}
-                </span>
-              </div>
-              <div class="table-cell category-col">{{ product.categoryName || 'Kategori yok' }}</div>
-              <div class="table-cell actions-col">
-                <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline-primary me-1" 
-                          (click)="openEditModal(product)"
-                          title="Düzenle">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger" 
-                          (click)="deleteProduct(product)"
-                          title="Sil">
-                    <i class="fas fa-trash"></i>
-                  </button>
+
+            <ng-container *ngFor="let product of filteredProducts">
+              <div class="table-row">
+                <div class="table-cell image-col">
+                  <img class="product-image" [src]="product.imageUrl || 'https://via.placeholder.com/45'" [alt]="product.name" />
+                </div>
+                <div class="table-cell name-col">{{ product.name }}</div>
+                <div class="table-cell description-col">{{ product.description || '-' }}</div>
+                <div class="table-cell price-col">{{ product.price | currency:'TRY':'symbol' }}</div>
+                <div class="table-cell stock-col">
+                  <span class="stock-badge" [ngClass]="{ 'low-stock': product.stock === 0 }">{{ product.stock }}</span>
+                </div>
+                <div class="table-cell category-col">{{ product.categoryName || ('#' + product.categoryId) }}</div>
+                <div class="table-cell actions-col">
+                  <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditModal(product)" title="Düzenle">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product)" title="Sil">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ng-container>
           </div>
+        </div>
 
-          <!-- Empty State -->
-          <div class="no-data" *ngIf="filteredProducts.length === 0 && !isLoading">
-            <i class="fas fa-box-open fa-3x mb-3"></i>
-            <h4>Ürün bulunamadı</h4>
-            <p>Arama kriterlerinize uygun ürün bulunamadı.</p>
-          </div>
+        <div class="loading-spinner" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
+        <div class="no-data" *ngIf="filteredProducts.length === 0 && !isLoading">
+          <i class="fas fa-box-open fa-3x mb-3"></i>
+          <h4>Ürün bulunamadı</h4>
+          <p>Arama kriterlerinize uygun ürün bulunamadı.</p>
         </div>
       </div>
     </div>
@@ -103,7 +93,7 @@ import { Product, ProductIndex } from '../../../model/product.model';
         </div>
         
         <div class="modal-body">
-          <form (ngSubmit)="saveProduct()">
+          <form (ngSubmit)="saveProduct(); $event.preventDefault(); $event.stopPropagation()" #productForm="ngForm" autocomplete="off">
             <div class="form-group">
               <label for="productName">Ürün Adı *</label>
               <input 
@@ -112,7 +102,12 @@ import { Product, ProductIndex } from '../../../model/product.model';
                 class="form-control" 
                 [(ngModel)]="newProduct.name" 
                 name="name"
-                required>
+                #nameField="ngModel"
+                required
+                minlength="2">
+              <div *ngIf="nameField.invalid && nameField.touched" class="error-message">
+                Ürün adı en az 2 karakter olmalıdır
+              </div>
             </div>
 
             <div class="form-group">
@@ -134,9 +129,13 @@ import { Product, ProductIndex } from '../../../model/product.model';
                   class="form-control" 
                   [(ngModel)]="newProduct.price" 
                   name="price"
-                  min="0"
+                  #priceField="ngModel"
+                  min="0.01"
                   step="0.01"
                   required>
+                <div *ngIf="priceField.invalid && priceField.touched" class="error-message">
+                  Geçerli bir fiyat giriniz (0'dan büyük)
+                </div>
               </div>
 
               <div class="form-group">
@@ -147,8 +146,12 @@ import { Product, ProductIndex } from '../../../model/product.model';
                   class="form-control" 
                   [(ngModel)]="newProduct.stock" 
                   name="stock"
+                  #stockField="ngModel"
                   min="0"
                   required>
+                <div *ngIf="stockField.invalid && stockField.touched" class="error-message">
+                  Stok miktarı 0 veya daha büyük olmalıdır
+                </div>
               </div>
             </div>
 
@@ -159,7 +162,12 @@ import { Product, ProductIndex } from '../../../model/product.model';
                 type="url" 
                 class="form-control" 
                 [(ngModel)]="newProduct.imageUrl" 
-                name="imageUrl">
+                name="imageUrl"
+                maxlength="255"
+                #imageUrlField="ngModel">
+              <div *ngIf="imageUrlField.errors?.['maxlength'] && imageUrlField.touched" class="error-message">
+                Resim URL'si en fazla 255 karakter olabilir.
+              </div>
             </div>
 
             <div class="form-group">
@@ -170,17 +178,21 @@ import { Product, ProductIndex } from '../../../model/product.model';
                 class="form-control" 
                 [(ngModel)]="newProduct.categoryId" 
                 name="categoryId"
+                #categoryField="ngModel"
                 min="1"
                 required>
+              <div *ngIf="categoryField.invalid && categoryField.touched" class="error-message">
+                Geçerli bir kategori ID giriniz
+              </div>
             </div>
 
             <div class="modal-actions">
               <button type="button" class="btn btn-secondary" (click)="closeModal()">
                 İptal
               </button>
-              <button type="submit" class="btn btn-primary">
-                {{ editingProduct ? 'Güncelle' : 'Ekle' }}
-              </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!productForm.form.valid || isSubmitting">
+                  {{ editingProduct ? 'Güncelle' : 'Ekle' }}
+                </button>
             </div>
           </form>
         </div>
@@ -652,6 +664,23 @@ import { Product, ProductIndex } from '../../../model/product.model';
       color: #a0aec0;
     }
 
+    .error-message {
+      color: #fc8181;
+      font-size: 13px;
+      margin-top: 8px;
+      padding-left: 4px;
+      display: block;
+    }
+
+    .form-control.ng-invalid.ng-touched {
+      border-color: #fc8181;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     textarea.form-control {
       resize: vertical;
       min-height: 100px;
@@ -762,6 +791,7 @@ export class AdminProductsComponent implements OnInit {
   isLoading: boolean = false;
   showAddModal: boolean = false;
   editingProduct: ProductIndex | null = null;
+  isSubmitting: boolean = false;
 
   newProduct: Partial<ProductIndex> = {
     name: '',
@@ -773,21 +803,43 @@ export class AdminProductsComponent implements OnInit {
     categoryName: ''
   };
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService, 
+    private categoryService: CategoryService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    
+    // Query parameter'ı kontrol et, "add" action varsa modal'ı aç
+    this.route.queryParams.subscribe(params => {
+      if (params['action'] === 'add') {
+        console.log('🎯 Dashboard\'dan "Yeni Ürün Ekle" butonuna basıldı, modal açılıyor...');
+        setTimeout(() => {
+          this.openAddModal();
+        }, 100); // Component tamamen yüklendikten sonra modal'ı aç
+      }
+    });
   }
 
   loadProducts(): void {
     this.isLoading = true;
-    console.log('Loading products from backend...');
+    console.log('📦 Loading products from backend...');
     this.productService.getAllProducts().subscribe({
       next: (response) => {
         console.log('✅ Products loaded successfully:', response.content.length);
         this.products = response.content;
         this.filteredProducts = response.content;
         this.isLoading = false;
+        
+        // Backend'den gelen ilk ürünün formatını inceleyelim
+        if (this.products.length > 0) {
+          console.log('🔍 Sample product format from backend:');
+          console.log(JSON.stringify(this.products[0], null, 2));
+          console.log('🔍 Sample product keys:', Object.keys(this.products[0]));
+        }
       },
       error: (error: any) => {
         console.error('❌ Error loading products:', error);
@@ -819,7 +871,6 @@ export class AdminProductsComponent implements OnInit {
           }
         ] as any;
         this.filteredProducts = this.products;
-        
         // Alert yerine console warning
         console.warn('⚠️ Backend bağlantısı kurulamadı, örnek veriler gösteriliyor.');
       }
@@ -839,17 +890,20 @@ export class AdminProductsComponent implements OnInit {
   }
 
   openAddModal(): void {
+    console.log('🚀 openAddModal() çalışıyor...');
     this.newProduct = {
       name: '',
       description: '',
       price: 0,
       stock: 0,
       imageUrl: '',
-      categoryId: '0',
+      categoryId: '1', // Varsayılan kategori ID
       categoryName: ''
     };
     this.editingProduct = null;
     this.showAddModal = true;
+    console.log('📝 Modal açıldı, yeni ürün formu hazır:', this.newProduct);
+    console.log('👁️ Modal gösterim durumu:', this.showAddModal);
   }
 
   openEditModal(product: ProductIndex): void {
@@ -861,46 +915,214 @@ export class AdminProductsComponent implements OnInit {
   closeModal(): void {
     this.showAddModal = false;
     this.editingProduct = null;
+    this.isSubmitting = false;
+    
+    // Query parameter'ı temizle (dashboard'dan gelindiyse)
+    if (this.route.snapshot.queryParams['action'] === 'add') {
+      this.router.navigate(['/admin/products'], { 
+        queryParams: {}, 
+        queryParamsHandling: 'replace' 
+      });
+    }
   }
 
   saveProduct(): void {
+    const timestamp = new Date().toISOString();
+    console.log(`🟢 saveProduct tetiklendi [${timestamp}]`);
+    console.log(`📊 Current isSubmitting state: ${this.isSubmitting}`);
+    
+    if (this.isSubmitting) {
+      console.warn(`⚠️ İşlem zaten devam ediyor, tekrar tetiklenmeyecek. [${timestamp}]`);
+      return;
+    }
+    this.isSubmitting = true;
+    console.log(`🔒 isSubmitting flag set to TRUE [${timestamp}]`);
+    console.log('🚀 saveProduct() fonksiyonu çalışıyor...');
+    console.log('📝 Form verileri:', this.newProduct);
+    console.log('✏️ Editing mode:', this.editingProduct ? 'true (güncelleme)' : 'false (yeni ürün)');
+
+    // Form doğrulama
+    if (!this.newProduct.name || this.newProduct.name.trim() === '') {
+      console.error('❌ Ürün adı boş!');
+      alert('Ürün adı zorunludur!');
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (!this.newProduct.price || this.newProduct.price <= 0) {
+      console.error('❌ Geçersiz fiyat!');
+      alert('Geçerli bir fiyat giriniz!');
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (!this.newProduct.categoryId || this.newProduct.categoryId === '0') {
+      console.error('❌ Kategori seçilmedi!');
+      alert('Kategori seçiniz!');
+      this.isSubmitting = false;
+      return;
+    }
+
+    const categoryIdNum = Number(this.newProduct.categoryId);
+
     if (this.editingProduct) {
-      // Convert ProductIndex to Product for backend API
+      console.log('🔄 Ürün güncelleme modunda...');
+      // Image URL length guard (DB column likely VARCHAR(255))
+      const imgUrl = (this.newProduct.imageUrl || '').trim();
+      if (imgUrl && imgUrl.length > 255) {
+        alert(`Resim URL'si çok uzun (${imgUrl.length}). En fazla 255 karakter olabilir.`);
+        this.isSubmitting = false;
+        return;
+      }
+      // Backend Product: expects nested category object with id
       const productData: Product = {
         id: +this.editingProduct.id,
         name: this.newProduct.name || '',
-        description: this.newProduct.description,
-        price: this.newProduct.price || 0,
-        stock: this.newProduct.stock || 0,
-        imageUrl: this.newProduct.imageUrl,
-        categoryId: +(this.newProduct.categoryId || '0')
+        description: this.newProduct.description?.trim() || undefined,
+        price: Number(this.newProduct.price) || 0,
+        stock: Number(this.newProduct.stock) || 0,
+        imageUrl: this.newProduct.imageUrl?.trim() || undefined,
+        category: { id: Number(this.newProduct.categoryId) } as any
       };
       
-      this.productService.updateProduct(+this.editingProduct.id, productData).subscribe({
+      // Remove undefined/empty values for cleanliness
+      (Object.keys(productData) as (keyof Product)[]).forEach((key) => {
+        const val = productData[key];
+        if (val === undefined || (typeof val === 'string' && val.trim() === '')) {
+          delete (productData as any)[key];
+        }
+      });
+
+      console.log('📤 Güncelleme verisi gönderiliyor:');
+      console.log(JSON.stringify(productData, null, 2));
+
+      // Kategori var mı kontrol et, sonra güncelle
+      this.categoryService.getCategoryById(categoryIdNum).subscribe({
         next: () => {
-          this.loadProducts();
-          this.closeModal();
+          this.productService.updateProduct(+this.editingProduct!.id, productData).subscribe({
+            next: (response) => {
+              console.log('✅ Ürün başarıyla güncellendi:', response);
+              this.loadProducts();
+              this.closeModal();
+            },
+            error: (error: any) => {
+              console.error('❌ Ürün güncelleme hatası:', error);
+              alert('Ürün güncellenirken hata oluştu: ' + (error.message || error));
+              this.isSubmitting = false;
+            }
+          });
         },
-        error: (error: any) => console.error('Error updating product:', error)
+        error: () => {
+          alert(`Kategori bulunamadı: #${categoryIdNum}. Lütfen geçerli bir kategori ID girin.`);
+          this.isSubmitting = false;
+        }
       });
     } else {
-      // Convert ProductIndex to Product for backend API  
-      const productData: Product = {
-        id: 0, // Will be assigned by backend
-        name: this.newProduct.name || '',
-        description: this.newProduct.description,
-        price: this.newProduct.price || 0,
-        stock: this.newProduct.stock || 0,
-        imageUrl: this.newProduct.imageUrl,
-        categoryId: +(this.newProduct.categoryId || '0')
-      };
+      console.log('➕ Yeni ürün ekleme modunda...');
+      // Image URL length guard (DB column likely VARCHAR(255))
+      const imgUrl = (this.newProduct.imageUrl || '').trim();
+      if (imgUrl && imgUrl.length > 255) {
+        alert(`Resim URL'si çok uzun (${imgUrl.length}). En fazla 255 karakter olabilir.`);
+        this.isSubmitting = false;
+        return;
+      }
       
-      this.productService.createProduct(productData).subscribe({
+      // Validation checks
+      if (!this.newProduct.name || this.newProduct.name.trim() === '') {
+        console.error('❌ Ürün adı boş!');
+        alert('Ürün adı zorunludur!');
+        this.isSubmitting = false;
+        return;
+      }
+
+      if (!this.newProduct.price || this.newProduct.price <= 0) {
+        console.error('❌ Geçersiz fiyat!');
+        alert('Geçerli bir fiyat giriniz!');
+        this.isSubmitting = false;
+        return;
+      }
+
+      if (!this.newProduct.categoryId || this.newProduct.categoryId === '0') {
+        console.error('❌ Kategori seçilmedi!');
+        alert('Kategori seçiniz!');
+        this.isSubmitting = false;
+        return;
+      }
+
+      // Backend Product: expects nested category object with id
+      const productData: Product = {
+        name: this.newProduct.name.trim(),
+        description: this.newProduct.description?.trim() || undefined,
+        price: Number(this.newProduct.price),
+        stock: Number(this.newProduct.stock) || 0,
+        imageUrl: this.newProduct.imageUrl?.trim() || undefined,
+        category: { id: Number(this.newProduct.categoryId) } as any
+      } as Product;
+      
+      // Remove undefined/empty values (for cleanliness)
+      (Object.keys(productData) as (keyof Product)[]).forEach((key) => {
+        const val = productData[key];
+        if (val === undefined || (typeof val === 'string' && val.trim() === '')) {
+          delete (productData as any)[key];
+        }
+      });
+      
+      console.log('📤 Yeni ürün verisi gönderiliyor:');
+      console.log(JSON.stringify(productData, null, 2));
+      console.log('📊 Data tipleri:', {
+        name: typeof productData.name,
+        price: typeof productData.price,
+        stock: typeof productData.stock,
+        category: typeof (productData as any).category,
+        description: typeof productData.description,
+        imageUrl: typeof productData.imageUrl
+      });
+      console.log('🔑 Auth token check:', localStorage.getItem('token') ? 'Token available' : 'No token found!');
+
+      // Kategori var mı kontrol et, sonra oluştur
+      this.categoryService.getCategoryById(categoryIdNum).subscribe({
         next: () => {
-          this.loadProducts();
-          this.closeModal();
+          this.productService.createProduct(productData).subscribe({
+            next: (response) => {
+              console.log('✅ Yeni ürün başarıyla eklendi:', response);
+              this.loadProducts();
+              this.closeModal(); // Bu zaten query param'ı temizleyecek
+              console.log('🔴 saveProduct zinciri tamamlandı');
+            },
+            error: (error: any) => {
+              console.error('❌ Ürün ekleme hatası:', error);
+              console.error('❌ Error Status:', error.status);
+              console.error('❌ Error Message:', error.message);
+              console.error('❌ Error Details:');
+              console.error(JSON.stringify(error.error, null, 2));
+              
+              let errorMessage = 'Ürün eklenirken hata oluştu: ';
+              
+              if (error.status === 400) {
+                if (error.error && error.error.message) {
+                  errorMessage += error.error.message;
+                } else if (error.error && typeof error.error === 'string') {
+                  errorMessage += error.error;
+                } else {
+                  errorMessage += 'Geçersiz veri gönderildi. Lütfen tüm alanları kontrol edin.';
+                }
+              } else if (error.status === 401) {
+                errorMessage += 'Yetki hatası. Lütfen tekrar giriş yapın.';
+              } else if (error.status === 403) {
+                errorMessage += 'Bu işlem için yetkiniz yok.';
+              } else {
+                errorMessage += error.message || 'Bilinmeyen hata';
+              }
+              
+              alert(errorMessage);
+              this.isSubmitting = false;
+            }
+          });
         },
-        error: (error: any) => console.error('Error creating product:', error)
+        error: () => {
+          alert(`Kategori bulunamadı: #${categoryIdNum}. Lütfen geçerli bir kategori ID girin.`);
+          this.isSubmitting = false;
+        }
       });
     }
   }

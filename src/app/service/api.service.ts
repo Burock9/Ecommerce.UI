@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 
 @Injectable({
@@ -40,26 +41,40 @@ export class ApiService {
         
         console.log('📨 Request params:', params);
         
-        const request = this.http.get<T>(`${this.baseUrl}${endpoint}`, {
+        return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
           headers: this.getHeaders(),
           params: httpParams
-        });
-
-        // Response'u intercept edelim
-        request.subscribe({
-          next: (response) => console.log('✅ API Response:', response),
-          error: (error) => console.error('❌ API Error:', error)
-        });
-
-        return request;
+        }).pipe(
+          tap({
+            next: (response) => console.log('✅ API Response:', response),
+            error: (error) => console.error('❌ API Error:', error)
+          })
+        );
     }
 
     
 
     post<T>(endpoint: string, data: any): Observable<T> {
+      console.log('🌐 ApiService POST:', this.baseUrl + endpoint);
+      console.log('🔑 Token available:', localStorage.getItem('token') ? 'Yes' : 'No');
+      console.log('📤 POST Data:');
+      console.log(JSON.stringify(data, null, 2));
+      
       return this.http.post<T>(`${this.baseUrl}${endpoint}`, data, {
         headers: this.getHeaders()
-      });
+      }).pipe(
+        tap({
+          next: (response) => console.log('✅ POST Response:', response),
+          error: (error) => {
+            console.error('❌ POST Error:', error);
+            console.error('❌ Error Status:', error.status);
+            console.error('❌ Error Message:', error.message);
+            console.error('❌ Error Body:');
+            console.error(JSON.stringify(error.error, null, 2));
+            console.error('❌ Error URL:', error.url);
+          }
+        })
+      );
     }
 
     put<T>(endpoint: string, data: any): Observable<T> {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
-import { CategoryIndex } from '../model/category.model';
-import { Page } from '../model/response.model';
+import { Category, CategoryIndex } from '../model/category.model';
+import { Page, ResponseWrapper } from '../model/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,8 +62,8 @@ export class CategoryService {
   }
 
   getAllCategoriesWithProductCount(page: number = 0, size: number = 20): Observable<Page<CategoryIndex>> {
-    // Admin endpoint'inde de ID'ye göre sıralama iste
-    return this.apiService.get<Page<CategoryIndex>>('/admin/categories/with-count', { 
+    // Normal categories endpoint'ini kullan, admin endpoint yok
+    return this.apiService.get<Page<CategoryIndex>>('/categories', { 
       page, 
       size, 
       sort: 'id,asc' // ID'ye göre artan sıralama
@@ -84,5 +84,37 @@ export class CategoryService {
       .pipe(
         map(response => response.totalElements || 0)
       );
+  }
+
+  // CRUD Operations for Admin
+  createCategory(category: Partial<Category>): Observable<Category> {
+    console.log('🏷️ CategoryService: createCategory called');
+    console.log('📤 Sending category data:', JSON.stringify(category, null, 2));
+    
+    return this.apiService.post<ResponseWrapper<Category>>('/categories', category)
+      .pipe(
+        map(response => {
+          console.log('✅ CategoryService: Category created successfully:', response);
+          return response.data;
+        })
+      );
+  }
+
+  updateCategory(id: number, category: Partial<Category>): Observable<Category> {
+    console.log('🏷️ CategoryService: updateCategory called for ID:', id);
+    console.log('📤 Sending category data:', JSON.stringify(category, null, 2));
+    
+    return this.apiService.put<ResponseWrapper<Category>>(`/categories/${id}`, category)
+      .pipe(
+        map(response => {
+          console.log('✅ CategoryService: Category updated successfully:', response);
+          return response.data;
+        })
+      );
+  }
+
+  deleteCategory(id: number): Observable<void> {
+    console.log('🏷️ CategoryService: deleteCategory called for ID:', id);
+    return this.apiService.delete<void>(`/categories/${id}`);
   }
 }

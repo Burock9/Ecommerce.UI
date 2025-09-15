@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../service/category.service';
-import { CategoryIndex } from '../../../model/category.model';
+import { Category, CategoryIndex } from '../../../model/category.model';
 
 @Component({
   selector: 'app-admin-categories',
@@ -80,6 +81,61 @@ import { CategoryIndex } from '../../../model/category.model';
             <h4>Kategori bulunamadı</h4>
             <p>Henüz kategori eklenmemiş veya arama kriterlerinize uygun kategori bulunamadı.</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div class="modal-overlay" *ngIf="showAddModal" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingCategory ? 'Kategori Düzenle' : 'Yeni Kategori Ekle' }}</h3>
+          <button class="close-btn" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <form (ngSubmit)="saveCategory(); $event.preventDefault(); $event.stopPropagation()" #categoryForm="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="categoryName">Kategori Adı *</label>
+              <input 
+                id="categoryName"
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="newCategory.name" 
+                name="name"
+                #nameField="ngModel"
+                required
+                minlength="2"
+                maxlength="100">
+              <div *ngIf="nameField.invalid && nameField.touched" class="error-message">
+                Kategori adı en az 2, en fazla 100 karakter olmalıdır
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="categoryDescription">Açıklama</label>
+              <textarea 
+                id="categoryDescription"
+                class="form-control" 
+                [(ngModel)]="newCategory.description" 
+                name="description"
+                maxlength="500"
+                rows="4"
+                placeholder="Kategori hakkında kısa bir açıklama..."></textarea>
+              <small class="text-muted">İsteğe bağlı, en fazla 500 karakter</small>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                İptal
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.form.valid || isSubmitting">
+                {{ editingCategory ? 'Güncelle' : 'Ekle' }}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -492,6 +548,158 @@ import { CategoryIndex } from '../../../model/category.model';
       .btn-sm { width: 32px; height: 32px; }
       .count-badge { padding: 4px 8px; font-size: 11px; }
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(45, 55, 72, 0.98) 0%, rgba(26, 32, 44, 0.98) 100%);
+      border: 1px solid rgba(100, 255, 218, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px;
+      border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .modal-header h3 {
+      color: #f8fafc;
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #a0aec0;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #ef4444;
+    }
+
+    .modal-body {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #e2e8f0;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, rgba(26, 32, 44, 0.9) 0%, rgba(45, 55, 72, 0.9) 100%);
+      border: 2px solid rgba(100, 255, 218, 0.2);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: #64ffda;
+      box-shadow: 0 0 0 0.3rem rgba(100, 255, 218, 0.15);
+      outline: none;
+    }
+
+    .form-control::placeholder {
+      color: #a0aec0;
+    }
+
+    .error-message {
+      color: #fc8181;
+      font-size: 13px;
+      margin-top: 8px;
+      padding-left: 4px;
+      display: block;
+    }
+
+    .form-control.ng-invalid.ng-touched {
+      border-color: #fc8181;
+    }
+
+    .text-muted {
+      color: #a0aec0;
+      font-size: 12px;
+      margin-top: 5px;
+      display: block;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, rgba(160, 174, 192, 0.2), rgba(113, 128, 150, 0.2));
+      border: 2px solid rgba(160, 174, 192, 0.3);
+      color: #a0aec0;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(160, 174, 192, 0.3);
+      color: #f8fafc;
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn:disabled:hover {
+      transform: none;
+    }
   `]
 })
 export class AdminCategoriesComponent implements OnInit {
@@ -499,11 +707,33 @@ export class AdminCategoriesComponent implements OnInit {
   filteredCategories: CategoryIndex[] = [];
   searchTerm: string = '';
   isLoading: boolean = false;
+  showAddModal: boolean = false;
+  editingCategory: CategoryIndex | null = null;
+  isSubmitting: boolean = false;
 
-  constructor(private categoryService: CategoryService) {}
+  newCategory: Partial<Category> = {
+    name: '',
+    description: ''
+  };
+
+  constructor(
+    private categoryService: CategoryService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadCategories();
+    
+    // Query parameter'ı kontrol et, "add" action varsa modal'ı aç
+    this.route.queryParams.subscribe(params => {
+      if (params['action'] === 'add') {
+        console.log('🎯 Dashboard\'dan "Yeni Kategori Ekle" butonuna basıldı, modal açılıyor...');
+        setTimeout(() => {
+          this.openAddModal();
+        }, 100); // Component tamamen yüklendikten sonra modal'ı aç
+      }
+    });
   }
 
   loadCategories(): void {
@@ -625,16 +855,175 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   openAddModal(): void {
-    console.log('Add category modal - not implemented yet');
+    console.log('🚀 openAddModal() çalışıyor...');
+    this.newCategory = {
+      name: '',
+      description: ''
+    };
+    this.editingCategory = null;
+    this.showAddModal = true;
+    this.isSubmitting = false;
+    console.log('📝 Modal açıldı, yeni kategori formu hazır:', this.newCategory);
+    console.log('👁️ Modal gösterim durumu:', this.showAddModal);
   }
 
   openEditModal(category: CategoryIndex): void {
-    console.log('Edit category modal - not implemented yet:', category);
+    console.log('✏️ Edit modal açılıyor:', category);
+    this.newCategory = {
+      name: category.name,
+      description: category.description || ''
+    };
+    this.editingCategory = category;
+    this.showAddModal = true;
+    this.isSubmitting = false;
+  }
+
+  closeModal(): void {
+    this.showAddModal = false;
+    this.editingCategory = null;
+    this.isSubmitting = false;
+    
+    // Query parameter'ı temizle (dashboard'dan gelindiyse)
+    if (this.route.snapshot.queryParams['action'] === 'add') {
+      this.router.navigate(['/admin/categories'], { 
+        queryParams: {}, 
+        queryParamsHandling: 'replace' 
+      });
+    }
+  }
+
+  saveCategory(): void {
+    const timestamp = new Date().toISOString();
+    console.log(`🟢 saveCategory tetiklendi [${timestamp}]`);
+    console.log(`📊 Current isSubmitting state: ${this.isSubmitting}`);
+    
+    if (this.isSubmitting) {
+      console.warn(`⚠️ İşlem zaten devam ediyor, tekrar tetiklenmeyecek. [${timestamp}]`);
+      return;
+    }
+    this.isSubmitting = true;
+    console.log(`🔒 isSubmitting flag set to TRUE [${timestamp}]`);
+    console.log('🚀 saveCategory() fonksiyonu çalışıyor...');
+    console.log('📝 Form verileri:', this.newCategory);
+    console.log('✏️ Editing mode:', this.editingCategory ? 'true (güncelleme)' : 'false (yeni kategori)');
+
+    // Form doğrulama
+    if (!this.newCategory.name || this.newCategory.name.trim() === '') {
+      console.error('❌ Kategori adı boş!');
+      alert('Kategori adı zorunludur!');
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (this.newCategory.name.trim().length < 2) {
+      console.error('❌ Kategori adı çok kısa!');
+      alert('Kategori adı en az 2 karakter olmalıdır!');
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (this.editingCategory) {
+      console.log('🔄 Kategori güncelleme modunda...');
+      const categoryData: Partial<Category> = {
+        name: this.newCategory.name.trim(),
+        description: this.newCategory.description?.trim() || undefined
+      };
+      
+      console.log('📤 Güncelleme verisi gönderiliyor:');
+      console.log(JSON.stringify(categoryData, null, 2));
+
+      this.categoryService.updateCategory(+this.editingCategory.id, categoryData).subscribe({
+        next: (response) => {
+          console.log('✅ Kategori başarıyla güncellendi:', response);
+          this.loadCategories();
+          this.closeModal();
+        },
+        error: (error: any) => {
+          console.error('❌ Kategori güncelleme hatası:', error);
+          alert('Kategori güncellenirken hata oluştu: ' + (error.message || error));
+          this.isSubmitting = false;
+        }
+      });
+    } else {
+      console.log('➕ Yeni kategori ekleme modunda...');
+      const categoryData: Partial<Category> = {
+        name: this.newCategory.name.trim(),
+        description: this.newCategory.description?.trim() || undefined
+      };
+      
+      // Undefined değerleri temizle
+      if (categoryData.description === undefined || categoryData.description === '') {
+        delete categoryData.description;
+      }
+      
+      console.log('📤 Yeni kategori verisi gönderiliyor:');
+      console.log(JSON.stringify(categoryData, null, 2));
+
+      this.categoryService.createCategory(categoryData).subscribe({
+        next: (response) => {
+          console.log('✅ Yeni kategori başarıyla eklendi:', response);
+          this.loadCategories();
+          this.closeModal();
+          console.log('🔴 saveCategory zinciri tamamlandı');
+        },
+        error: (error: any) => {
+          console.error('❌ Kategori ekleme hatası:', error);
+          console.error('❌ Error Status:', error.status);
+          console.error('❌ Error Message:', error.message);
+          console.error('❌ Error Details:');
+          console.error(JSON.stringify(error.error, null, 2));
+          
+          let errorMessage = 'Kategori eklenirken hata oluştu: ';
+          
+          if (error.status === 400) {
+            if (error.error && error.error.message) {
+              errorMessage += error.error.message;
+            } else if (error.error && typeof error.error === 'string') {
+              errorMessage += error.error;
+            } else {
+              errorMessage += 'Geçersiz veri gönderildi. Lütfen tüm alanları kontrol edin.';
+            }
+          } else if (error.status === 401) {
+            errorMessage += 'Yetki hatası. Lütfen tekrar giriş yapın.';
+          } else if (error.status === 403) {
+            errorMessage += 'Bu işlem için yetkiniz yok.';
+          } else {
+            errorMessage += error.message || 'Bilinmeyen hata';
+          }
+          
+          alert(errorMessage);
+          this.isSubmitting = false;
+        }
+      });
+    }
   }
 
   deleteCategory(category: CategoryIndex): void {
     if (confirm(`"${category.name}" kategorisini silmek istediğinize emin misiniz?`)) {
-      console.log('Delete category - not implemented yet:', category);
+      console.log('🗑️ Kategori silme işlemi başlatılıyor:', category);
+      
+      this.categoryService.deleteCategory(+category.id).subscribe({
+        next: () => {
+          console.log('✅ Kategori başarıyla silindi:', category.name);
+          this.loadCategories();
+        },
+        error: (error: any) => {
+          console.error('❌ Kategori silme hatası:', error);
+          let errorMessage = 'Kategori silinirken hata oluştu: ';
+          
+          if (error.status === 400) {
+            errorMessage += 'Bu kategoriye ait ürünler olabilir. Önce ürünleri başka kategoriye taşıyın.';
+          } else if (error.status === 401) {
+            errorMessage += 'Yetki hatası. Lütfen tekrar giriş yapın.';
+          } else if (error.status === 403) {
+            errorMessage += 'Bu işlem için yetkiniz yok.';
+          } else {
+            errorMessage += error.message || 'Bilinmeyen hata';
+          }
+          
+          alert(errorMessage);
+        }
+      });
     }
   }
 }

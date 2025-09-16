@@ -145,15 +145,18 @@
         </div>
 
         <div class="form-group">
-          <label for="productCategory">Kategori ID *</label>
-          <input 
+          <label for="productCategory">Kategori *</label>
+          <select 
             id="productCategory"
-            type="number" 
             class="form-control" 
             [(ngModel)]="newProduct.categoryId" 
             name="categoryId"
-            min="1"
             required>
+            <option value="">Kategori seçiniz</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
         </div>
 
         <div class="modal-actions">

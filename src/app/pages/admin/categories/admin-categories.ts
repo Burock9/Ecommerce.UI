@@ -54,7 +54,7 @@ import { Category, CategoryIndex } from '../../../model/category.model';
             <div class="table-row" *ngFor="let category of filteredCategories">
               <div class="table-cell id-col">{{ category.id }}</div>
               <div class="table-cell name-col">{{ category.name }}</div>
-              <div class="table-cell description-col">{{ category.description || 'Açıklama yok' }}</div>
+              <div class="table-cell description-col">{{ category.description || '-' }}</div>
               <div class="table-cell count-col">
                 <span class="count-badge">{{ category.productCount || 0 }}</span>
               </div>

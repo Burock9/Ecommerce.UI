@@ -627,13 +627,13 @@
 }
 
 .auth-buttons .btn-primary {
-  background: #ffd700;
+  background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
   border-color: #ffd700;
   color: #1a1a1a;
 }
 
 .auth-buttons .btn-primary:hover {
-  background: #ffed4e;
+  background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
   border-color: #ffed4e;
   color: #1a1a1a;
   transform: translateY(-1px);

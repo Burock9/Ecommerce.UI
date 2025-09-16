@@ -50,7 +50,7 @@ import { Product, ProductIndex } from '../../../model/product.model';
                 </div>
                 <div class="table-cell name-col">{{ product.name }}</div>
                 <div class="table-cell description-col">{{ product.description || '-' }}</div>
-                <div class="table-cell price-col">{{ product.price | currency:'TRY':'symbol' }}</div>
+                <div class="table-cell price-col">{{product.price | number:'1.0-0'}} ₺</div>
                 <div class="table-cell stock-col">
                   <span class="stock-badge" [ngClass]="{ 'low-stock': product.stock === 0 }">{{ product.stock }}</span>
                 </div>
@@ -171,18 +171,21 @@ import { Product, ProductIndex } from '../../../model/product.model';
             </div>
 
             <div class="form-group">
-              <label for="productCategory">Kategori ID *</label>
-              <input 
+              <label for="productCategory">Kategori *</label>
+              <select 
                 id="productCategory"
-                type="number" 
-                class="form-control" 
+                class="form-control category-dropdown" 
                 [(ngModel)]="newProduct.categoryId" 
                 name="categoryId"
                 #categoryField="ngModel"
-                min="1"
                 required>
+                <option value="">Kategori seçiniz</option>
+                <option *ngFor="let category of categories" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
               <div *ngIf="categoryField.invalid && categoryField.touched" class="error-message">
-                Geçerli bir kategori ID giriniz
+                Lütfen bir kategori seçiniz
               </div>
             </div>
 
@@ -660,6 +663,45 @@ import { Product, ProductIndex } from '../../../model/product.model';
       outline: none;
     }
 
+    /* Kategori dropdown özel stilleri */
+    .category-dropdown {
+      position: relative;
+      cursor: pointer;
+      appearance: none; /* Varsayılan ok'u kaldır */
+      background-image: 
+        linear-gradient(135deg, rgba(26, 32, 44, 0.9) 0%, rgba(45, 55, 72, 0.9) 100%),
+        url("data:image/svg+xml;charset=utf8,%3Csvg fill='%2364ffda' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat, no-repeat;
+      background-position: center, right 15px center;
+      background-size: cover, 20px;
+      padding-right: 50px; /* Ok için yer aç */
+    }
+
+    .category-dropdown:hover {
+      border-color: #4fd1c7;
+      background-image: 
+        linear-gradient(135deg, rgba(45, 55, 72, 0.95) 0%, rgba(26, 32, 44, 0.95) 100%),
+        url("data:image/svg+xml;charset=utf8,%3Csvg fill='%234fd1c7' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      transform: translateY(-1px);
+    }
+
+    .category-dropdown option {
+      background: #1a202c;
+      color: #f8fafc;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .category-dropdown option:hover {
+      background: #2d3748;
+      color: #64ffda;
+    }
+
+    .category-dropdown option[value=""] {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
     .form-control::placeholder {
       color: #a0aec0;
     }
@@ -787,6 +829,7 @@ import { Product, ProductIndex } from '../../../model/product.model';
 export class AdminProductsComponent implements OnInit {
   products: ProductIndex[] = [];
   filteredProducts: ProductIndex[] = [];
+  categories: any[] = []; // Kategoriler listesi
   searchTerm: string = '';
   isLoading: boolean = false;
   showAddModal: boolean = false;
@@ -812,6 +855,7 @@ export class AdminProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategories(); // Kategorileri yükle
     
     // Query parameter'ı kontrol et, "add" action varsa modal'ı aç
     this.route.queryParams.subscribe(params => {
@@ -877,6 +921,26 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
+  loadCategories(): void {
+    console.log('📂 Loading categories from backend...');
+    this.categoryService.getAllCategories().subscribe({
+      next: (response) => {
+        console.log('✅ Categories loaded successfully:', response.content.length);
+        this.categories = response.content; // Page response'un content'ini al
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading categories:', error);
+        // Hata durumunda örnek kategoriler
+        this.categories = [
+          { id: 1, name: 'Elektronik', description: 'Elektronik ürünler' },
+          { id: 2, name: 'Giyim', description: 'Giyim ürünleri' },
+          { id: 3, name: 'Ev & Yaşam', description: 'Ev ve yaşam ürünleri' }
+        ];
+        console.warn('⚠️ Kategori yüklenemedi, örnek veriler gösteriliyor.');
+      }
+    });
+  }
+
   searchProducts(): void {
     if (!this.searchTerm.trim()) {
       this.filteredProducts = this.products;
@@ -897,7 +961,7 @@ export class AdminProductsComponent implements OnInit {
       price: 0,
       stock: 0,
       imageUrl: '',
-      categoryId: '1', // Varsayılan kategori ID
+      categoryId: '', // Boş olarak başlat, kullanıcı seçsin
       categoryName: ''
     };
     this.editingProduct = null;
@@ -956,9 +1020,9 @@ export class AdminProductsComponent implements OnInit {
       return;
     }
 
-    if (!this.newProduct.categoryId || this.newProduct.categoryId === '0') {
+    if (!this.newProduct.categoryId || this.newProduct.categoryId === '') {
       console.error('❌ Kategori seçilmedi!');
-      alert('Kategori seçiniz!');
+      alert('Lütfen bir kategori seçiniz!');
       this.isSubmitting = false;
       return;
     }
@@ -1042,9 +1106,9 @@ export class AdminProductsComponent implements OnInit {
         return;
       }
 
-      if (!this.newProduct.categoryId || this.newProduct.categoryId === '0') {
+      if (!this.newProduct.categoryId || this.newProduct.categoryId === '') {
         console.error('❌ Kategori seçilmedi!');
-        alert('Kategori seçiniz!');
+        alert('Lütfen bir kategori seçiniz!');
         this.isSubmitting = false;
         return;
       }

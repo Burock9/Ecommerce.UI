@@ -56,8 +56,12 @@ export class ProductService {
     return this.apiService.get<ProductIndex>(`/products/${id}`);
   }
 
-  getProductsByCategory(categoryId: number, page: number = 0, size: number = 20): Observable<Page<ProductIndex>> {
-    return this.apiService.get<Page<ProductIndex>>(`/products/category/${categoryId}`, { page, size });
+  getProductsByCategory(categoryId: number, page: number = 0, size: number = 20, sort?: string): Observable<Page<ProductIndex>> {
+    const params: any = { page, size };
+    if (sort) {
+      params.sort = sort;
+    }
+    return this.apiService.get<Page<ProductIndex>>(`/products/category/${categoryId}`, params);
   }
 
   getInStockProducts(page: number = 0, size: number = 20): Observable<Page<ProductIndex>> {

@@ -61,12 +61,15 @@ import { User } from '../../../model/auth.model';
               <div class="table-cell actions-col">
                 <div class="action-buttons">
                   <button class="btn btn-sm btn-outline-primary me-1" 
-                          title="Düzenle">
+                          [disabled]="isCurrentUser(user.id)"
+                          [title]="isCurrentUser(user.id) ? 'Kendi hesabınızı düzenleyemezsiniz' : 'Düzenle'"
+                          (click)="openEditModal(user)">
                     <i class="fas fa-edit"></i>
                   </button>
                   <button class="btn btn-sm btn-outline-danger" 
-                          (click)="deleteUser(user.id)"
-                          title="Sil">
+                          [disabled]="isCurrentUser(user.id)"
+                          [title]="isCurrentUser(user.id) ? 'Kendi hesabınızı silemezsiniz' : 'Sil'"
+                          (click)="deleteUser(user.id)">
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
@@ -78,6 +81,117 @@ import { User } from '../../../model/auth.model';
             <i class="fas fa-users fa-3x mb-3"></i>
             <p>Henüz kullanıcı bulunmuyor.</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal-overlay" *ngIf="showEditModal" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-user-edit me-2"></i>
+            Kullanıcı Düzenle
+          </h3>
+          <button class="close-btn" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <form (ngSubmit)="saveUser()" #userForm="ngForm">
+            <div class="form-group">
+              <label for="username">Kullanıcı Adı *</label>
+              <input 
+                id="username"
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="editingUser.username" 
+                name="username"
+                #usernameField="ngModel"
+                required
+                minlength="3">
+              <div *ngIf="usernameField.invalid && usernameField.touched" class="error-message">
+                Kullanıcı adı en az 3 karakter olmalıdır
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">E-posta *</label>
+              <input 
+                id="email"
+                type="email" 
+                class="form-control" 
+                [(ngModel)]="editingUser.email" 
+                name="email"
+                #emailField="ngModel"
+                required
+                email>
+              <div *ngIf="emailField.invalid && emailField.touched" class="error-message">
+                Geçerli bir e-posta adresi giriniz
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Yeni Şifre (opsiyonel)</label>
+              <input 
+                id="password"
+                type="password" 
+                class="form-control" 
+                [(ngModel)]="editingUser.password" 
+                name="password"
+                #passwordField="ngModel"
+                minlength="6">
+              <div *ngIf="passwordField.invalid && passwordField.touched" class="error-message">
+                Şifre en az 6 karakter olmalıdır
+              </div>
+              <small class="form-text">Boş bırakırsanız mevcut şifre korunur</small>
+            </div>
+
+            <div class="form-group">
+              <label>Roller *</label>
+              <div class="role-checkboxes">
+                <div class="role-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="role-user"
+                    [(ngModel)]="editingUser.hasUserRole"
+                    name="hasUserRole"
+                    #userRoleField="ngModel">
+                  <label for="role-user" class="role-label user-role">
+                    <i class="fas fa-user me-2"></i>
+                    Kullanıcı
+                  </label>
+                </div>
+                <div class="role-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="role-admin"
+                    [(ngModel)]="editingUser.hasAdminRole"
+                    name="hasAdminRole"
+                    #adminRoleField="ngModel">
+                  <label for="role-admin" class="role-label admin-role">
+                    <i class="fas fa-crown me-2"></i>
+                    Yönetici
+                  </label>
+                </div>
+              </div>
+              <div *ngIf="!editingUser.hasUserRole && !editingUser.hasAdminRole" class="error-message">
+                En az bir rol seçilmelidir
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                İptal
+              </button>
+              <button type="submit" class="btn btn-primary" 
+                      [disabled]="userForm.invalid || (!editingUser.hasUserRole && !editingUser.hasAdminRole)">
+                <i class="fas fa-save me-1"></i>
+                Kaydet
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -507,12 +621,276 @@ import { User } from '../../../model/auth.model';
     .search-section {
       animation: fadeInUp 0.5s ease-out;
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, rgba(26, 32, 44, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%);
+      border: 2px solid rgba(100, 255, 218, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 30px;
+      border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+      background: linear-gradient(135deg, rgba(100, 255, 218, 0.05) 0%, transparent 100%);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: #64ffda;
+      font-size: 22px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #a0aec0;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #64ffda;
+      background: rgba(100, 255, 218, 0.1);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #e2e8f0;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, rgba(26, 32, 44, 0.9) 0%, rgba(45, 55, 72, 0.9) 100%);
+      border: 2px solid rgba(100, 255, 218, 0.2);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-control:focus {
+      border-color: #64ffda;
+      box-shadow: 0 0 0 0.3rem rgba(100, 255, 218, 0.15);
+      outline: none;
+    }
+
+    .form-text {
+      color: #a0aec0;
+      font-size: 13px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .error-message {
+      color: #fc8181;
+      font-size: 13px;
+      margin-top: 8px;
+      padding-left: 4px;
+    }
+
+    .role-checkboxes {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .role-checkbox {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .role-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      appearance: none;
+      border: 2px solid rgba(100, 255, 218, 0.3);
+      border-radius: 6px;
+      background: rgba(26, 32, 44, 0.8);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .role-checkbox input[type="checkbox"]:checked {
+      background: #64ffda;
+      border-color: #64ffda;
+    }
+
+    .role-checkbox input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      left: 3px;
+      top: 2px;
+      color: #1a202c;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .role-label {
+      color: #e2e8f0;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s ease;
+      user-select: none;
+    }
+
+    .role-label:hover {
+      color: #64ffda;
+    }
+
+    .role-label.user-role i {
+      color: #4fd1c7;
+    }
+
+    .role-label.admin-role i {
+      color: #ffc107;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .btn-secondary {
+      background: rgba(160, 174, 192, 0.2);
+      color: #a0aec0;
+      border: 2px solid rgba(160, 174, 192, 0.3);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(160, 174, 192, 0.3);
+      color: #e2e8f0;
+      border-color: rgba(160, 174, 192, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+      color: #1a202c;
+      border: 2px solid #64ffda;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
+      border-color: #4fd1c7;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(100, 255, 218, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Disabled action buttons */
+    .action-buttons .btn:disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .action-buttons .btn:disabled i {
+      color: #718096;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.95);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+      }
+    }
   `]
 })
 export class AdminUsersComponent implements OnInit {
   users: User[] = [];
   searchTerm: string = '';
   loading: boolean = false;
+  
+  // Modal properties
+  showEditModal: boolean = false;
+  editingUser: any = {
+    id: null,
+    username: '',
+    email: '',
+    password: '',
+    hasUserRole: false,
+    hasAdminRole: false
+  };
 
   constructor(private userService: UserService) { }
 
@@ -628,5 +1006,130 @@ export class AdminUsersComponent implements OnInit {
       role.includes('admin') || 
       role.toUpperCase().includes('ADMIN')
     );
+  }
+
+  isCurrentUser(userId: number): boolean {
+    const currentUserId = this.getCurrentUserId();
+    return currentUserId === userId;
+  }
+
+  // Modal methods
+  openEditModal(user: User): void {
+    // Kendi kendini düzenleme kontrolü
+    const currentUserId = this.getCurrentUserId();
+    if (currentUserId && user.id === currentUserId) {
+      alert('⚠️ Güvenlik nedeniyle kendi hesabınızı düzenleyemezsiniz.\n\nHesap bilgilerinizi değiştirmek için profil sayfanızı kullanın.');
+      return;
+    }
+
+    this.editingUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      password: '', // Şifreyi boş bırak
+      // Backend'den gelen ROLE_USER, ROLE_ADMIN formatını kontrol et
+      hasUserRole: user.roles.some(role => 
+        role.includes('USER') || 
+        role.includes('user') || 
+        role === 'ROLE_USER'
+      ),
+      hasAdminRole: user.roles.some(role => 
+        role.includes('ADMIN') || 
+        role.includes('admin') || 
+        role === 'ROLE_ADMIN'
+      )
+    };
+    this.showEditModal = true;
+    console.log('🔧 Editing user:', this.editingUser);
+    console.log('📋 Original user roles:', user.roles);
+    console.log('✅ Parsed roles - USER:', this.editingUser.hasUserRole, 'ADMIN:', this.editingUser.hasAdminRole);
+  }
+
+  private getCurrentUserId(): number | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId || payload.sub || payload.id;
+      } catch (e) {
+        console.error('Token parse error:', e);
+      }
+    }
+    return null;
+  }
+
+  closeModal(): void {
+    this.showEditModal = false;
+    this.editingUser = {
+      id: null,
+      username: '',
+      email: '',
+      password: '',
+      hasUserRole: false,
+      hasAdminRole: false
+    };
+  }
+
+  saveUser(): void {
+    if (!this.editingUser.hasUserRole && !this.editingUser.hasAdminRole) {
+      alert('En az bir rol seçilmelidir!');
+      return;
+    }
+
+    // Backend'in beklediği formatta rol array'i oluştur
+    const roles: string[] = [];
+    if (this.editingUser.hasUserRole) roles.push('ROLE_USER'); // Backend enum format
+    if (this.editingUser.hasAdminRole) roles.push('ROLE_ADMIN'); // Backend enum format
+
+    const updateData = {
+      username: this.editingUser.username.trim(),
+      email: this.editingUser.email.trim(),
+      roles: roles,
+      ...(this.editingUser.password && { password: this.editingUser.password })
+    };
+
+    console.log('🔧 Updating user:', this.editingUser.id, updateData);
+    console.log('🔑 Current token:', localStorage.getItem('token') ? 'Available' : 'Missing');
+    console.log('🔑 Token value:', localStorage.getItem('token')?.substring(0, 50) + '...');
+    console.log('👤 Roles being sent:', roles);
+    
+    // Token expiry check
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const exp = payload.exp * 1000; // Convert to milliseconds
+        const now = Date.now();
+        console.log('⏰ Token expiry:', new Date(exp));
+        console.log('⏰ Current time:', new Date(now));
+        console.log('⏰ Token expired:', exp < now ? 'YES' : 'NO');
+        console.log('👤 User roles in token:', payload.roles || payload.authorities);
+      } catch (e) {
+        console.error('❌ Token parse error:', e);
+      }
+    }
+
+    this.userService.updateUser(this.editingUser.id, updateData).subscribe({
+      next: (response) => {
+        console.log('✅ User updated successfully:', response);
+        this.loadUsers(); // Listeyi yenile
+        this.closeModal();
+        alert('Kullanıcı başarıyla güncellendi');
+      },
+      error: (error) => {
+        console.error('❌ Kullanıcı güncelleme hatası:', error);
+        console.log('📡 Error details:');
+        console.log('- Status:', error.status);
+        console.log('- StatusText:', error.statusText);
+        console.log('- URL:', error.url);
+        console.log('- Headers:', error.headers);
+        
+        if (error.status === 403) {
+          alert('❌ Yetki hatası: Bu işlem için yeterli yetkiniz yok.\n\nMuhtemel nedenler:\n• Token süresi dolmuş\n• ADMIN yetkisi yok\n• Giriş yapmadınız\n\nLütfen tekrar giriş yapın.');
+        } else {
+          alert('Kullanıcı güncellenirken hata oluştu: ' + (error.error?.message || error.message));
+        }
+      }
+    });
   }
 }

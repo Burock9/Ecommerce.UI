@@ -5,7 +5,7 @@
   border-bottom: 1px solid rgba(100, 255, 218, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1050; /* Bootstrap navbar'dan yüksek ama dropdown'lardan düşük */
   backdrop-filter: blur(20px);
 }
 
@@ -15,6 +15,7 @@
   justify-content: space-between;
   padding: 12px 0;
   min-height: 70px;
+  position: relative; /* dropdown'lar için */
 }
 
 /* Logo Section */
@@ -105,14 +106,84 @@
   border: 1px solid rgba(100, 255, 218, 0.3);
 }
 
-/* Dropdown Styles */
+/* Dropdown Navigation Override - Bootstrap'ın default davranışını engelle */
+.nav-item.dropdown {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-item.dropdown.show {
+  z-index: 10001; /* Dropdown açıkken nav item'ı da en üste çıkar */
+}
+
+.nav-item.dropdown .dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  margin-top: 0 !important;
+  transform: none !important;
+}
+
+/* Categories Dropdown Styles - Sadece kategoriler için */
+.categories-dropdown {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border: 1px solid rgba(100, 255, 218, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(100, 255, 218, 0.1);
+  padding: 10px 0;
+  backdrop-filter: blur(15px);
+  /* Bootstrap override */
+  display: none !important;
+  opacity: 0;
+  transform: translateY(0) !important; /* Bootstrap transform'u sıfırla */
+  transition: none !important;
+  top: 100% !important; /* Direkt alta yerleştir */
+  margin-top: 8px !important;
+  z-index: 10000 !important; /* En üstte göster */
+  position: absolute !important;
+  left: 0 !important;
+  min-width: 220px;
+}
+
+/* Dropdown'ın tıklanmasını engellemek için */
+.categories-dropdown {
+  pointer-events: auto;
+}
+
+.categories-dropdown .dropdown-item {
+  pointer-events: auto;
+}
+
+.categories-dropdown.show {
+  display: block !important;
+  animation: categoriesSlideDown 0.2s ease-out forwards;
+  opacity: 1;
+}
+
+.categories-dropdown:not(.show) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Categories dropdown animation */
+@keyframes categoriesSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown Styles - Genel modern dropdown */
 .modern-dropdown {
   background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
   border: 1px solid rgba(100, 255, 218, 0.2);
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   padding: 10px 0;
-  margin-top: 8px;
   backdrop-filter: blur(10px);
 }
 
@@ -122,11 +193,43 @@
   border: none;
   background: none;
   color: #e2e8f0;
+  display: flex;
+  align-items: center;
 }
 
 .dropdown-item:hover {
   background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
   color: #1a202c !important;
+  border-radius: 8px;
+  margin: 2px 8px;
+  transform: translateX(4px);
+}
+
+.dropdown-item:focus {
+  background: linear-gradient(135deg, #64ffda 0%, #4fd1c7 100%);
+  color: #1a202c !important;
+}
+
+.dropdown-item.disabled {
+  color: #64748b !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dropdown-item.disabled:hover {
+  background: none !important;
+  color: #64748b !important;
+}
+
+/* Category icon styling */
+.category-icon {
+  color: #64ffda;
+  width: 16px;
+  text-align: center;
+}
+
+.dropdown-item:hover .category-icon {
+  color: #1a202c;
 }
 
 .dropdown-header {

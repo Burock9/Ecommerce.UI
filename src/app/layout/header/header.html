@@ -23,15 +23,38 @@
             </a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" (click)="toggleDropdown($event)" [attr.aria-expanded]="isDropdownOpen">
               <i class="fas fa-th-large me-1"></i>Kategoriler
             </a>
-            <ul class="dropdown-menu modern-dropdown">
-              <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Elektronik</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-tshirt me-2"></i>Giyim & Moda</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-home me-2"></i>Ev & Yaşam</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-gamepad me-2"></i>Oyun & Hobi</a></li>
+            <ul class="dropdown-menu categories-dropdown" [class.show]="isDropdownOpen" aria-labelledby="categoriesDropdown" (click)="$event.stopPropagation()">
+              @for (category of categories; track category.id) {
+                <li>
+                  <a class="dropdown-item" href="#" (click)="goToCategory(category, $event)">
+                    <i [class]="getCategoryIcon(category.name) + ' me-2 category-icon'"></i>{{ category.name }}
+                  </a>
+                </li>
+              } @empty {
+                <li>
+                  <span class="dropdown-item disabled">
+                    <i class="fas fa-info-circle me-2"></i>Kategori bulunamadı
+                  </span>
+                </li>
+              }
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" (click)="goToCart()">
+              <i class="fas fa-shopping-cart me-1"></i>
+              Sepetim
+              @if (cartCount > 0) {
+                <span class="cart-badge">{{ cartCount }}</span>
+              }
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" (click)="goToOrders()">
+              <i class="fas fa-box me-1"></i>Siparişlerim
+            </a>
           </li>
           <!--
           <li class="nav-item">
@@ -106,37 +129,43 @@
         <div class="user-actions">
           
           <!-- Auth Dropdown - Not Logged In -->
-          <div class="auth-dropdown" *ngIf="!currentUser">
-            <div class="dropdown auth-hover-dropdown">
-              <button class="btn btn-primary auth-dropdown-btn" type="button" id="authDropdown">
-                <i class="fas fa-user me-1"></i>Giriş Yap
-                <i class="fas fa-chevron-down ms-1"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end auth-dropdown-menu">
-                <li>
-                  <a class="dropdown-item" routerLink="/login">
-                    <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" routerLink="/register">
-                    <i class="fas fa-user-plus me-2"></i>Üye Ol
-                  </a>
-                </li>
-              </ul>
+          @if (!currentUser) {
+            <div class="auth-dropdown">
+              <div class="dropdown auth-hover-dropdown">
+                <button class="btn btn-primary auth-dropdown-btn" type="button" id="authDropdown">
+                  <i class="fas fa-user me-1"></i>Giriş Yap
+                  <i class="fas fa-chevron-down ms-1"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end auth-dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" routerLink="/login">
+                      <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" routerLink="/register">
+                      <i class="fas fa-user-plus me-2"></i>Üye Ol
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          }
 
           <!-- User Info - Logged In -->
-          <div class="user-info" *ngIf="currentUser">
-            <span class="welcome-text me-3">Hoş geldin, {{ currentUser.username }}!</span>
-            <a routerLink="/admin" class="btn btn-warning me-2" *ngIf="isAdmin()">
-              <i class="fas fa-cog me-1"></i>Admin
-            </a>
-            <button class="btn btn-outline-danger" (click)="logout()">
-              <i class="fas fa-sign-out-alt me-1"></i>Çıkış
-            </button>
-          </div>
+          @if (currentUser) {
+            <div class="user-info">
+              <span class="welcome-text me-3">Hoş geldin, {{ currentUser.username }}!</span>
+              @if (isAdmin()) {
+                <a routerLink="/admin" class="btn btn-warning me-2">
+                  <i class="fas fa-cog me-1"></i>Admin
+                </a>
+              }
+              <button class="btn btn-outline-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt me-1"></i>Çıkış
+              </button>
+            </div>
+          }
           
           <!-- User Account Dropdown -->
           <div class="dropdown d-none">
@@ -148,33 +177,30 @@
             </button>
             
             <!-- Not Logged In Menu -->
-            <ul class="dropdown-menu dropdown-menu-end modern-dropdown" *ngIf="!currentUser">
-              <li class="dropdown-header">Hoş Geldiniz!</li>
-              <li><a class="dropdown-item" routerLink="/login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</a></li>
-              <li><a class="dropdown-item" routerLink="/register"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-truck me-2"></i>Kargo Takibi</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-headset me-2"></i>Destek</a></li>
-            </ul>
+            @if (!currentUser) {
+              <ul class="dropdown-menu dropdown-menu-end modern-dropdown">
+                <li class="dropdown-header">Hoş Geldiniz!</li>
+                <li><a class="dropdown-item" routerLink="/login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</a></li>
+                <li><a class="dropdown-item" routerLink="/register"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-truck me-2"></i>Kargo Takibi</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-headset me-2"></i>Destek</a></li>
+              </ul>
+            }
             
             <!-- Logged In Menu -->
-            <ul class="dropdown-menu dropdown-menu-end modern-dropdown" *ngIf="currentUser">
-              <li class="dropdown-header">Hoş geldin, {{ currentUser.username }}!</li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profilim</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Hesap Ayarları</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
-            </ul>
+            @if (currentUser) {
+              <ul class="dropdown-menu dropdown-menu-end modern-dropdown">
+                <li class="dropdown-header">Hoş geldin, {{ currentUser.username }}!</li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Hesap Ayarları</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+              </ul>
+            }
           </div>
-          
-          <!-- Shopping Cart -->
-          <button class="action-btn cart-btn" title="Sepetim">
-            <i class="fas fa-shopping-cart"></i>
-            <!--<span class="badge-count cart-count">2</span>-->
-            <span class="d-none d-lg-inline ms-1">Sepetim</span>
-          </button>
           
         </div>
         
@@ -221,14 +247,18 @@
       <li><a href="#"><i class="fas fa-headset me-2"></i>Destek</a></li>
       
       <!-- Auth Links -->
-      <li class="auth-divider" *ngIf="!currentUser"></li>
-      <li *ngIf="!currentUser"><a routerLink="/login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</a></li>
-      <li *ngIf="!currentUser"><a routerLink="/register"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</a></li>
+      @if (!currentUser) {
+        <li class="auth-divider"></li>
+        <li><a routerLink="/login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</a></li>
+        <li><a routerLink="/register"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</a></li>
+      }
       
-      <li class="auth-divider" *ngIf="currentUser"></li>
-      <li *ngIf="currentUser"><a href="#"><i class="fas fa-user me-2"></i>Profilim</a></li>
-      <li *ngIf="currentUser"><a href="#"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
-      <li *ngIf="currentUser"><a href="#" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+      @if (currentUser) {
+        <li class="auth-divider"></li>
+        <li><a href="#"><i class="fas fa-user me-2"></i>Profilim</a></li>
+        <li><a href="#"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+        <li><a href="#" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+      }
     </ul>
   </div>
 </div>

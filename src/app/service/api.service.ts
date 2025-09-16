@@ -78,9 +78,28 @@ export class ApiService {
     }
 
     put<T>(endpoint: string, data: any): Observable<T> {
+      console.log('🌐 ApiService PUT:', this.baseUrl + endpoint);
+      console.log('🔑 Token available:', localStorage.getItem('token') ? 'Yes' : 'No');
+      console.log('📤 PUT Data:');
+      console.log(JSON.stringify(data, null, 2));
+      
       return this.http.put<T>(`${this.baseUrl}${endpoint}`, data, {
         headers: this.getHeaders()
-      });
+      }).pipe(
+        tap({
+          next: (response) => console.log('✅ PUT Response:', response),
+          error: (error) => {
+            console.error('❌ PUT Error:', error);
+            console.error('❌ Error Status:', error.status);
+            console.error('❌ Error Message:', error.message);
+            console.error('❌ Error Body:');
+            console.error(JSON.stringify(error.error, null, 2));
+            console.error('❌ Error URL:', error.url);
+            console.error('❌ Request headers sent:');
+            console.error('Authorization:', localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')?.substring(0, 20)}...` : 'None');
+          }
+        })
+      );
     }
 
     delete<T>(endpoint: string): Observable<T> {

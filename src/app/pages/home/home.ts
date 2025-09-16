@@ -87,7 +87,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     this.categories = [
       { id: '1', name: 'Elektronik', description: 'Son teknoloji ürünler' },
       { id: '2', name: 'Giyim', description: 'Trendy kıyafetler' },
-      { id: '3', name: 'Ev Aletleri', description: 'Ev dekorasyonu' },
+      { id: '3', name: 'Ev & Yaşam', description: 'Ev dekorasyonu' },
       { id: '4', name: 'Spor', description: 'Spor ürünleri' },
       { id: '5', name: 'Kitap', description: 'Kitaplar' },
       { id: '6', name: 'Oyun', description: 'Oyun ürünleri' }
@@ -105,7 +105,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
     const iconMap: { [key: string]: string } = {
       'Elektronik': '📱',
       'Giyim': '👕',
-      'Ev Aletleri': '🏠',
+      'Ev & Yaşam': '🏠',
       'Spor': '🏃‍♂️',
       'Kitap': '📚',
       'Oyun': '🎮',
@@ -216,7 +216,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
       'Moda': '👗',
       'Giyim': '👕',
       'Ayakkabı': '👟',
-      'Ev': '🏠',
+      'Ev & Yaşam': '🏠',
       'Mobilya': '🪑',
       'Kitap': '📚',
       'Spor': '⚽',
@@ -244,7 +244,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
   getCategorySlideTitle(categoryName: string): string {
     const titleMap: { [key: string]: string } = {
       'Teknoloji': 'Teknolojinin En Yenisi',
-      'Elektronik': 'Elektronik Dünyaya Adım',
+      'Elektronik': 'Yeni Teknolojilerle',
       'Telefon': 'İletişimin Zirvesi',
       'Laptop': 'Mobil Güç Merkezi',
       'Oyun Konsolları': 'Gerçek Oyun Deneyimi',
@@ -385,8 +385,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
   getCategorySlideImage(categoryName: string): string {
     const imageMap: { [key: string]: string } = {
-      'Elektronik': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=400&fit=crop',
-      'Teknoloji': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
+      'Elektronik': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop',
       'Telefon': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=400&fit=crop',
       'Laptop': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=400&fit=crop',
       'Bakım Ürünleri': 'https://www.makyajtrendi.com/Content/ContentImage/637617671050461671-2456491_810x458.jpg',

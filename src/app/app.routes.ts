@@ -14,6 +14,7 @@ export const routes: Routes = [
     {path: '', component: Home},
     {path: 'categories', component: Categories},
     {path: 'categories/:id', component: CategoryPage},
+    {path: 'category/:id', component: CategoryPage}, // Header dropdown'dan gelen linkler için
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
     {

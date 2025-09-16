@@ -81,7 +81,7 @@ export class CategoriesBar implements OnInit {
     this.categories = [
       { id: '1', name: 'Elektronik', description: 'Elektronik ürünler' },
       { id: '2', name: 'Giyim', description: 'Giyim ürünleri' },
-      { id: '3', name: 'Ev Aletleri', description: 'Ev ürünleri' },
+      { id: '3', name: 'Ev & Yaşam', description: 'Ev ürünleri' },
       { id: '4', name: 'Spor', description: 'Spor ürünleri' },
       { id: '5', name: 'Kitap', description: 'Kitaplar' }
     ];
@@ -98,7 +98,7 @@ export class CategoriesBar implements OnInit {
     const iconMap: { [key: string]: string } = {
       'Elektronik': '📱',
       'Giyim': '👕',
-      'Ev Aletleri': '🏠',
+      'Ev & Yaşam': '🏠',
       'Spor': '🏃‍♂️',
       'Kitap': '📚',
       'Oyun': '🎮',

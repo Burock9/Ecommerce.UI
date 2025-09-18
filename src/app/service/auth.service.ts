@@ -11,6 +11,7 @@ import { ResponseWrapper } from '../model/response.model';
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  public isLoggedIn$ = this.currentUserSubject.pipe(map(user => !!user));
 
   constructor(private apiService: ApiService) {
     this.initializeAuth();

@@ -221,7 +221,7 @@
               <small class="text-muted d-block">{{product.categoryName}}</small>
             </div>
             
-            <button class="btn btn-add-cart w-100 mt-3" [disabled]="product.stock === 0">
+            <button class="btn btn-add-cart w-100 mt-3" [disabled]="product.stock === 0" (click)="addToCart(product)">
               <i class="fas fa-shopping-cart me-2"></i>
               {{product.stock > 0 ? 'Sepete Ekle' : 'Stok Yok'}}
             </button>
@@ -276,7 +276,7 @@
               </div>
             </div>
             
-            <button class="btn btn-add-cart w-100">
+            <button class="btn btn-add-cart w-100" (click)="addMockProductToCart(product)">
               <i class="fas fa-shopping-cart me-2"></i>Sepete Ekle
             </button>
           </div>

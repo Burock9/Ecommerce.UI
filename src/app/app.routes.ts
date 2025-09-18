@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
 import { Categories } from './pages/categories/categories';
 import { CategoryPage } from './pages/category/category';
+// CartComponent import'u yenileniyor
+import { CartComponent } from './pages/cart/cart';
 import { LoginComponent } from './pages/auth/login';
 import { RegisterComponent } from './pages/auth/register';
 import { AdminComponent } from './pages/admin/admin';
@@ -10,11 +12,14 @@ import { AdminCategoriesComponent } from './pages/admin/categories/admin-categor
 import { AdminUsersComponent } from './pages/admin/users/admin-users';
 import { AdminGuard } from './guards/admin.guard';
 
+console.log('🔍 Routes loaded, CartComponent:', CartComponent);
+
 export const routes: Routes = [
     {path: '', component: Home},
     {path: 'categories', component: Categories},
     {path: 'categories/:id', component: CategoryPage},
     {path: 'category/:id', component: CategoryPage}, // Header dropdown'dan gelen linkler için
+    {path: 'cart', component: CartComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
     {

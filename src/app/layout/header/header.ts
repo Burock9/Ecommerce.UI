@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../service/auth.service';
 import { CategoryService } from '../../service/category.service';
+import { CartService } from '../../service/cart.service';
 import { User } from '../../model/auth.model';
 import { Category } from '../../model/category.model';
 
@@ -18,19 +21,24 @@ export class Header implements OnInit, OnDestroy {
   categories: Category[] = []; // Backend'den gelen kategoriler
   isDropdownOpen: boolean = false; // Dropdown durumu
   private clickListener?: (event: Event) => void;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService, 
-    private categoryService: CategoryService, 
+    private categoryService: CategoryService,
+    private cartService: CartService,
     private elementRef: ElementRef,
     private router: Router
   ) {
-    this.authService.currentUser$.subscribe(user => {
+    // Kullanıcı durumunu izle
+    this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.currentUser = user;
     });
-    
-    // TODO: Gerçek sepet servisinden cart count'u al
-    this.cartCount = 0;
+
+    // Sepet sayısını izle
+    this.cartService.cartItemCount$.pipe(takeUntil(this.destroy$)).subscribe(count => {
+      this.cartCount = count;
+    });
   }
 
   ngOnInit(): void {
@@ -52,6 +60,10 @@ export class Header implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Subject'i temizle
+    this.destroy$.next();
+    this.destroy$.complete();
+    
     // Click listener'ı temizle
     if (this.clickListener) {
       document.removeEventListener('click', this.clickListener);
@@ -93,9 +105,37 @@ export class Header implements OnInit, OnDestroy {
 
   // Sepete git
   goToCart(): void {
-    console.log('Sepete gidiliyor...');
-    // TODO: Sepet sayfası oluşturulduğunda bu route'u aktifleştir
-    // this.router.navigate(['/cart']);
+    console.log('🛒 goToCart() çağrıldı');
+    console.log('🗺️ Current URL before navigation:', this.router.url);
+    console.log('🔐 Auth durumu:', {
+      token: !!this.authService.getToken(),
+      user: this.authService.getCurrentUser()?.username,
+      authenticated: this.authService.isAuthenticated()
+    });
+    
+    console.log('🎯 Navigating to /cart...');
+    
+    // Navigation'ı 500ms geciktir ki debug log'larını görebilelim
+    setTimeout(() => {
+      this.router.navigate(['/cart']).then((success) => {
+        console.log('🚀 Navigation result:', success ? 'SUCCESS' : 'FAILED');
+        console.log('🗺️ Current URL after navigation:', this.router.url);
+        
+        if (!success) {
+          console.error('❌ Navigation başarısız! Muhtemelen guard engelliyor.');
+        }
+        
+        // 2 saniye sonra durum kontrolü
+        setTimeout(() => {
+          console.log('⏰ 2 saniye sonra durum:');
+          console.log('🗺️ Final URL:', this.router.url);
+          console.log('🔐 Auth hala valid?', this.authService.isAuthenticated());
+        }, 2000);
+        
+      }).catch((error) => {
+        console.error('💥 Navigation error:', error);
+      });
+    }, 500);
   }
 
   // Siparişlere git  

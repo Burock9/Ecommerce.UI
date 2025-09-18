@@ -1,8 +1,12 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ProductService } from '../../service/product.service';
 import { CategoryService } from '../../service/category.service';
+import { CartService } from '../../service/cart.service';
+import { AuthService } from '../../service/auth.service';
 import { ProductIndex } from '../../model/product.model';
 import { CategoryIndex } from '../../model/category.model';
 import { Page } from '../../model/response.model';
@@ -14,10 +18,11 @@ import { Page } from '../../model/response.model';
   templateUrl: './category.html',
   styleUrl: './category.css'
 })
-export class CategoryPage implements OnInit {
+export class CategoryPage implements OnInit, OnDestroy {
   categoryId!: string;
   category: CategoryIndex | null = null;
   products: ProductIndex[] = [];
+  private destroy$ = new Subject<void>();
   loading = false;
   error: string | null = null;
 
@@ -33,7 +38,10 @@ export class CategoryPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -43,6 +51,11 @@ export class CategoryPage implements OnInit {
       this.loadCategory();
       this.loadProducts();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadCategory(): void {
@@ -230,5 +243,39 @@ export class CategoryPage implements OnInit {
     this.currentView = viewType;
     console.log('👁️ Görünüm değişti:', viewType);
     // TODO: Grid/List view toggle functionality
+  }
+
+  // Sepete ürün ekle
+  addToCart(product: ProductIndex): void {
+    // Login kontrolü
+    if (!this.authService.isAuthenticated()) {
+      alert('Sepete ürün eklemek için giriş yapmalısınız.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (product.stock <= 0) {
+      alert('Bu ürün stokta yok.');
+      return;
+    }
+
+    this.cartService.addToCart(Number(product.id), 1)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Ürün sepete eklendi:', response);
+          // Başarı mesajı göster
+          alert(`"${product.name}" sepete eklendi!`);
+        },
+        error: (error) => {
+          console.error('❌ Sepete ekleme hatası:', error);
+          if (error.status === 401) {
+            alert('Oturumunuz sona erdi. Lütfen tekrar giriş yapın.');
+            this.router.navigate(['/login']);
+          } else {
+            alert('Ürün sepete eklenirken hata oluştu.');
+          }
+        }
+      });
   }
 }

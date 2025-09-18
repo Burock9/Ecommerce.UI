@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { Cart, CartItem, AddToCartRequest, CartAnalytics } from '../model/cart.model';
 import { ResponseWrapper } from '../model/response.model';
 import { AuthService } from './auth.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class CartService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private apiService: ApiService
   ) {
     // Kullanıcı giriş yaptığında sepeti yükle
     this.authService.isLoggedIn$.subscribe((isLoggedIn: boolean) => {
@@ -53,107 +55,56 @@ export class CartService {
   }
 
   /**
-   * HTTP header'larını hazırla
-   */
-  private getHttpHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    const currentUser = this.authService.getCurrentUser();
-    
-    console.log('👤 Current User:', currentUser);
-    console.log('👤 User Roles:', currentUser?.roles);
-    
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
-
-  /**
    * Kullanıcının sepetini backend'den yükle
    */
   loadCart(): Observable<Cart> {
     console.log('🔄 loadCart() çağrıldı');
-    console.log('🔗 Elasticsearch API URL:', `${this.apiUrl}/elasticsearch`);
     console.log('🔑 Token:', this.authService.getToken() ? 'Mevcut' : 'YOK!');
     
-    const headers = this.getHttpHeaders();
-    console.log('📤 HTTP Headers:', headers);
-    
-    // Önce Elasticsearch endpoint'ini dene
-    return this.http.get<any>(`${this.apiUrl}/elasticsearch`, { 
-      headers: headers 
-    }).pipe(
-      tap(response => {
-        console.log('✅ Elasticsearch response:', response);
+    // Sıralı sonuç için veritabanı endpoint'ini kullan (ID sırasına göre sıralı!)
+    return this.apiService.get<any>('/cart').pipe(
+      map(response => {
+        console.log('📦 Database response:', response);
         
-        // Elasticsearch response'unu Cart formatına dönüştür
+        // Backend CartResponse formatından Cart formatına dönüştür
         let cart: Cart;
-        if (response && response.id && response.items) {
-          // Elasticsearch formatından Cart formatına dönüştür
+        
+        if (response && response.items && Array.isArray(response.items)) {
+          // CartResponse formatından Cart formatına dönüştür
           const items: CartItem[] = response.items.map((item: any) => ({
             productId: parseInt(item.productId),
             productName: item.productName,
             quantity: item.quantity,
-            price: item.subtotal
+            price: item.price, // CartResponse'da price olarak geliyor
+            imageUrl: item.imageUrl // Backend'den gelen imageUrl'yi direkt kullan
           }));
           
           cart = {
             items: items,
             totalPrice: response.totalPrice || 0
           };
+          
+          console.log('✅ Sepet başarıyla dönüştürüldü (DATABASE):', cart);
         } else {
-          // Boş response durumu
+          console.log('📭 Boş sepet response\'u (DATABASE)');
           cart = { items: [], totalPrice: 0 };
         }
         
-        console.log('🔄 Dönüştürülmüş cart:', cart);
+        console.log('📦 Database cart (sıralı):', cart);
         this.updateCartState(cart);
-        console.log('🛒 Sepet state güncellendi');
+        return cart;
       }),
       catchError(error => {
-        console.error('❌ Elasticsearch hatası:', error);
+        console.error('❌ Database hatası:', error);
         
-        // Elasticsearch hatası varsa normal endpoint'i dene
-        console.log('🔄 Normal database endpoint\'i deneniyor...');
-        return this.http.get<Cart>(this.apiUrl, { headers }).pipe(
-          tap(cart => {
-            console.log('✅ Database response:', cart);
-            this.updateCartState(cart);
-          }),
-          catchError(dbError => {
-            console.error('❌ Database hatası:', dbError);
-            
-            if (dbError.status === 403 || dbError.status === 404) {
-              console.log('📝 Sepet bulunamadı, boş sepet oluşturuluyor');
-              const emptyCart: Cart = { items: [], totalPrice: 0 };
-              this.updateCartState(emptyCart);
-              return of(emptyCart);
-            }
-            
-            // Diğer hataları yukarı fırlat
-            throw dbError;
-          })
-        );
-      }),
-      // Response mapping - Elasticsearch response'u Observable<Cart>'a dönüştür
-      map(response => {
-        if (response && response.id && response.items) {
-          // Elasticsearch response
-          const items: CartItem[] = response.items.map((item: any) => ({
-            productId: parseInt(item.productId),
-            productName: item.productName,
-            quantity: item.quantity,
-            price: item.subtotal
-          }));
-          
-          return {
-            items: items,
-            totalPrice: response.totalPrice || 0
-          } as Cart;
-        } else {
-          // Database response veya boş response
-          return response as Cart || { items: [], totalPrice: 0 };
+        if (error.status === 403 || error.status === 404) {
+          console.log('📝 Sepet bulunamadı (Database), boş sepet oluşturuluyor');
+          const emptyCart: Cart = { items: [], totalPrice: 0 };
+          this.updateCartState(emptyCart);
+          return of(emptyCart);
         }
+        
+        throw error;
       })
     );
   }
@@ -162,9 +113,16 @@ export class CartService {
    * Sepet durumunu güncelle
    */
   private updateCartState(cart: Cart): void {
+    console.log('🔄 updateCartState çağrıldı, gelen cart:', cart);
+    console.log('📊 Sepet item sayısı:', cart.items.length);
+    console.log('💰 Toplam fiyat:', cart.totalPrice);
+    
     this.cartSubject.next(cart);
     const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
     this.cartItemCountSubject.next(totalItems);
+    
+    console.log('📤 BehaviorSubject güncellendi, toplam item:', totalItems);
+    console.log('🛒 Mevcut cartSubject value:', this.cartSubject.value);
   }
 
   /**
@@ -179,13 +137,10 @@ export class CartService {
    * Sepete ürün ekle
    */
   addToCart(productId: number, quantity: number = 1): Observable<ResponseWrapper<string>> {
+    console.log('🛒 addToCart() çağrıldı - productId:', productId, 'quantity:', quantity);
     const request: AddToCartRequest = { productId, quantity };
     
-    return this.http.post<ResponseWrapper<string>>(
-      `${this.apiUrl}/add`, 
-      request,
-      { headers: this.getHttpHeaders() }
-    ).pipe(
+    return this.apiService.post<ResponseWrapper<string>>('/cart/add', request).pipe(
       tap(response => {
         console.log('✅ Sepete eklendi:', response);
         // Sepeti yeniden yükle
@@ -198,14 +153,77 @@ export class CartService {
    * Sepetten ürün çıkar
    */
   removeFromCart(productId: number): Observable<ResponseWrapper<string>> {
-    return this.http.delete<ResponseWrapper<string>>(
-      `${this.apiUrl}/remove/${productId}`,
-      { headers: this.getHttpHeaders() }
-    ).pipe(
+    console.log('🗑️ removeFromCart() - productId:', productId);
+    console.log('🔑 Auth token:', this.authService.getToken() ? 'Mevcut' : 'YOK');
+    
+    if (!this.authService.getToken()) {
+      console.log('⚠️ Token yok, API çağrısı yapılamıyor');
+      return of({ data: 'Token yok', message: 'Token bulunamadı' } as ResponseWrapper<string>);
+    }
+    
+    return this.apiService.delete<ResponseWrapper<string>>(`/cart/remove/${productId}`).pipe(
       tap(response => {
-        console.log('🗑️ Sepetten çıkarıldı:', response);
+        console.log('✅ Ürün silindi, sepet yeniden yükleniyor...');
         // Sepeti yeniden yükle
         this.loadCart().subscribe();
+      }),
+      catchError(error => {
+        console.error('❌ removeFromCart API hatası:', error);
+        console.error('❌ Hata detayları:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          message: error.message
+        });
+        throw error;
+      })
+    );
+  }
+
+  /**
+   * Sepeti tamamen temizle (Backend'e istek gönder)
+   */
+  clearCartOnServer(): Observable<ResponseWrapper<string>> {
+    console.log('🗑️ clearCartOnServer() çağrıldı');
+    return this.apiService.delete<ResponseWrapper<string>>('/cart/clear').pipe(
+      tap(response => {
+        console.log('🗑️ Sepet tamamen temizlendi:', response);
+        // Local state'i de temizle
+        this.clearCart();
+      })
+    );
+  }
+
+  /**
+   * Sepetteki ürün miktarını güncelle
+   */
+  updateQuantity(productId: number, newQuantity: number): Observable<ResponseWrapper<string>> {
+    console.log('🔢 updateQuantity() - productId:', productId, 'newQuantity:', newQuantity);
+    console.log('🔑 Auth token:', this.authService.getToken() ? 'Mevcut' : 'YOK');
+    
+    if (!this.authService.getToken()) {
+      console.log('⚠️ Token yok, API çağrısı yapılamıyor');
+      return of({ data: 'Token yok', message: 'Token bulunamadı' } as ResponseWrapper<string>);
+    }
+    
+    return this.apiService.put<ResponseWrapper<string>>('/cart/update', { 
+      productId: productId, 
+      quantity: newQuantity 
+    }).pipe(
+      tap(response => {
+        console.log('✅ Miktar güncellendi, sepet yeniden yükleniyor...');
+        // Sepeti yeniden yükle
+        this.loadCart().subscribe();
+      }),
+      catchError(error => {
+        console.error('❌ updateQuantity API hatası:', error);
+        console.error('❌ Hata detayları:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          message: error.message
+        });
+        throw error;
       })
     );
   }
@@ -214,10 +232,8 @@ export class CartService {
    * Sepet analizi getir (Elasticsearch'ten)
    */
   getCartAnalytics(): Observable<CartAnalytics> {
-    return this.http.get<CartAnalytics>(
-      `${this.apiUrl}/my-cart/analytics`,
-      { headers: this.getHttpHeaders() }
-    );
+    console.log('📊 getCartAnalytics() çağrıldı');
+    return this.apiService.get<CartAnalytics>('/cart/my-cart/analytics');
   }
 
   /**
@@ -272,5 +288,23 @@ export class CartService {
   getTotalPrice(): number {
     const cart = this.getCurrentCart();
     return cart.totalPrice;
+  }
+
+  /**
+   * Test için sepete örnek veri ekle (Development only)
+   */
+  addTestData(): void {
+    console.log('🧪 Test verileri ekleniyor...');
+    const testCart: Cart = {
+      items: [
+        { productId: 1, productName: 'Test Ürün 1', quantity: 2, price: 100 },
+        { productId: 2, productName: 'Test Ürün 2', quantity: 1, price: 50 },
+        { productId: 3, productName: 'Test Ürün 3', quantity: 3, price: 200 }
+      ],
+      totalPrice: 350
+    };
+    
+    this.updateCartState(testCart);
+    console.log('✅ Test verileri eklendi:', testCart);
   }
 }

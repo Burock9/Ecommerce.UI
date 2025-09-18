@@ -103,8 +103,25 @@ export class ApiService {
     }
 
     delete<T>(endpoint: string): Observable<T> {
+      console.log('🌐 ApiService DELETE:', this.baseUrl + endpoint);
+      console.log('🔑 Token available:', localStorage.getItem('token') ? 'Yes' : 'No');
+      
       return this.http.delete<T>(`${this.baseUrl}${endpoint}`, {
         headers: this.getHeaders()
-      });
+      }).pipe(
+        tap({
+          next: (response) => console.log('✅ DELETE Response:', response),
+          error: (error) => {
+            console.error('❌ DELETE Error:', error);
+            console.error('❌ Error Status:', error.status);
+            console.error('❌ Error Message:', error.message);
+            console.error('❌ Error Body:');
+            console.error(JSON.stringify(error.error, null, 2));
+            console.error('❌ Error URL:', error.url);
+            console.error('❌ Request headers sent:');
+            console.error('Authorization:', localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')?.substring(0, 20)}...` : 'None');
+          }
+        })
+      );
     }
 }

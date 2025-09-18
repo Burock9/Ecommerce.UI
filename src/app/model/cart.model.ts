@@ -3,6 +3,7 @@ export interface CartItem {
   productName: string;
   quantity: number;
   price: number;
+  imageUrl?: string; // Ürün fotoğrafı için eklendi
 }
 
 export interface Cart {

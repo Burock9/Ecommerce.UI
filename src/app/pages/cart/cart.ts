@@ -51,14 +51,28 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
     
-    // Test için static veri
-    this.cart = { 
-      items: [
-        { productId: 1, productName: 'Test Ürün', quantity: 2, price: 100 }
-      ], 
-      totalPrice: 200 
-    };
-    this.loading = false;
+    // Gerçek sepet verisini CartService'den al
+    this.loading = true;
+    
+    // CartService'deki sepet durumunu dinle (otomatik yüklenir)
+    this.cartService.cart$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (cart) => {
+        console.log('🛒 CartService\'ten sepet verisi geldi:', cart);
+        this.cart = cart;
+        this.loading = false;
+        
+        if (cart.items.length > 0) {
+          console.log('✅ Sepet dolu, ürün sayısı:', cart.items.length);
+        } else {
+          console.log('📪 Sepet boş');
+        }
+      },
+      error: (error) => {
+        console.error('❌ Sepet verisi yüklenirken hata:', error);
+        this.error = 'Sepet verileri yüklenirken bir hata oluştu.';
+        this.loading = false;
+      }
+    });
     
     console.log('✅ CartComponent yüklemesi tamamlandı');
     
@@ -68,6 +82,7 @@ export class CartComponent implements OnInit, OnDestroy {
       console.log('🗺️ Current route:', this.router.url);
       console.log('🔓 Still authenticated?', this.authService.isAuthenticated());
       console.log('👤 Current user still exists?', !!this.authService.getCurrentUser());
+      console.log('🛒 Current cart state:', this.cart);
     }, 5000);
   }
 
@@ -84,26 +99,105 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   removeFromCart(productId: number): void {
-    console.log('🗑️ Remove product:', productId);
-    alert('Ürün çıkarma test aşamasında');
+    console.log('🗑️ removeFromCart metodu çağrıldı - productId:', productId);
+    console.log('🛒 Mevcut cart durumu:', this.cart);
+    
+    // Test verisi mi kontrol et (backend'te olmayan veriler)
+    if (this.isTestData()) {
+      console.log('🧪 Test verisi tespit edildi, local olarak siliniyor');
+      this.removeItemLocally(productId);
+      return;
+    }
+    
+    this.removeItem(productId);
+  }
+
+  // Test verisi mi kontrol et
+  private isTestData(): boolean {
+    // Test verileri genellikle "Test Ürün" prefix'i ile başlar
+    return this.cart.items.some(item => item.productName.includes('Test Ürün'));
+  }
+
+  // Local test için (backend çalışmadığında)
+  private removeItemLocally(productId: number): void {
+    console.log('🧪 Local olarak ürün siliniyor:', productId);
+    this.cart = {
+      ...this.cart,
+      items: this.cart.items.filter(item => item.productId !== productId),
+      totalPrice: this.cart.items
+        .filter(item => item.productId !== productId)
+        .reduce((sum, item) => sum + item.price, 0)
+    };
+    console.log('✅ Local silme tamamlandı, yeni cart:', this.cart);
   }
 
   updateQuantity(productId: number, newQuantity: number): void {
-    console.log('🔢 Update quantity:', productId, newQuantity);
+    console.log('🔢 updateQuantity çağrıldı:', { productId, newQuantity });
+    console.log('🛒 Mevcut cart durumu:', this.cart);
     
+    // Test verisi mi kontrol et
+    if (this.isTestData()) {
+      console.log('🧪 Test verisi tespit edildi, local olarak güncelleniyor');
+      this.updateQuantityLocally(productId, newQuantity);
+      return;
+    }
+    
+    // Miktar 0 veya daha küçükse ürünü sil
     if (newQuantity <= 0) {
+      console.log('🗑️ Miktar 0 veya küçük, ürün siliniyor:', productId);
       this.removeItem(productId);
       return;
     }
 
-    // Test için ürün miktarını güncelle
-    const item = this.cart.items.find(item => item.productId === productId);
-    if (item) {
-      const unitPrice = item.price / item.quantity; // Birim fiyat
-      item.quantity = newQuantity;
-      item.price = unitPrice * newQuantity; // Toplam fiyatı güncelle
-      this.updateTotalPrice();
+    console.log('🔄 Backend\'e miktar güncelleme isteği gönderiliyor...');
+    
+    // Backend'e miktar güncelleme isteği gönder
+    this.cartService.updateQuantity(productId, newQuantity).subscribe({
+      next: (response) => {
+        console.log('✅ Miktar başarıyla güncellendi:', response);
+        // CartService otomatik olarak sepeti yeniden yükleyecek
+      },
+      error: (error) => {
+        console.error('❌ Miktar güncellenirken hata:', error);
+        this.error = 'Miktar güncellenirken bir hata oluştu.';
+        
+        // 3 saniye sonra hatayı temizle
+        setTimeout(() => {
+          this.error = null;
+        }, 3000);
+      }
+    });
+  }
+
+  // Local test için (backend çalışmadığında)
+  private updateQuantityLocally(productId: number, newQuantity: number): void {
+    console.log('🧪 Local olarak miktar güncelleniyor:', { productId, newQuantity });
+    
+    if (newQuantity <= 0) {
+      console.log('🗑️ Miktar 0, ürün siliniyor');
+      this.removeItemLocally(productId);
+      return;
     }
+    
+    const newItems = this.cart.items.map(item => {
+      if (item.productId === productId) {
+        const pricePerItem = item.price / item.quantity;
+        return {
+          ...item,
+          quantity: newQuantity,
+          price: pricePerItem * newQuantity
+        };
+      }
+      return item;
+    });
+    
+    this.cart = {
+      ...this.cart,
+      items: newItems,
+      totalPrice: newItems.reduce((sum, item) => sum + item.price, 0)
+    };
+    
+    console.log('✅ Local güncelleme tamamlandı, yeni cart:', this.cart);
   }
 
   continueShopping(): void {
@@ -141,17 +235,55 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   removeItem(productId: number): void {
-    console.log('🗑️ Ürün sil:', productId);
-    // Test için ürünü sepetten çıkar
-    this.cart.items = this.cart.items.filter(item => item.productId !== productId);
-    this.updateTotalPrice();
+    console.log('🗑️ removeItem çağrıldı - productId:', productId);
+    console.log('🛒 Mevcut sepet durumu:', this.cart);
+    console.log('🔄 Backend\'e silme isteği gönderiliyor...');
+    
+    // Loading göstermiyoruz, sadece işlemi yapıyoruz
+    
+    // Backend'e silme isteği gönder
+    this.cartService.removeFromCart(productId).subscribe({
+      next: (response) => {
+        console.log('✅ Ürün başarıyla silindi:', response);
+        // CartService otomatik olarak sepeti yeniden yükleyecek
+      },
+      error: (error) => {
+        console.error('❌ Ürün silinirken hata:', error);
+        console.error('❌ Error details:', {
+          status: error.status,
+          message: error.message,
+          error: error.error
+        });
+        // Hata durumunda kullanıcıya bilgi ver
+        this.error = 'Ürün silinirken bir hata oluştu.';
+        
+        // 3 saniye sonra hatayı temizle
+        setTimeout(() => {
+          this.error = null;
+        }, 3000);
+      }
+    });
   }
 
   clearCart(): void {
     console.log('🗑️ Sepeti temizle');
     if (confirm('Sepeti tamamen temizlemek istediğinize emin misiniz?')) {
-      this.cart.items = [];
-      this.cart.totalPrice = 0;
+      // Backend'e sepet temizleme isteği gönder
+      this.cartService.clearCartOnServer().subscribe({
+        next: (response) => {
+          console.log('✅ Sepet başarıyla temizlendi:', response);
+          // CartService otomatik olarak sepeti güncelledi
+        },
+        error: (error) => {
+          console.error('❌ Sepet temizlenirken hata:', error);
+          this.error = 'Sepet temizlenirken bir hata oluştu.';
+          
+          // 3 saniye sonra hatayı temizle
+          setTimeout(() => {
+            this.error = null;
+          }, 3000);
+        }
+      });
     }
   }
 
@@ -161,5 +293,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private updateTotalPrice(): void {
     this.cart.totalPrice = this.cart.items.reduce((total, item) => total + item.price, 0);
+  }
+
+  // Test için veri yükleme
+  loadTestData(): void {
+    console.log('🧪 Test verileri yükleniyor...');
+    this.cartService.addTestData();
   }
 }

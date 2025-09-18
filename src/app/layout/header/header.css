@@ -837,3 +837,120 @@
 .mobile-nav .auth-divider::before {
   content: '';
 }
+
+/* Neon Cart Badge Styles */
+.neon-cart-badge {
+  background: #64ffda;
+  color: #000000;
+  font-size: 0.6rem;
+  font-weight: bold;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 3px #64ffda,
+    0 0 6px #64ffda,
+    0 0 10px #64ffda;
+  animation: neonPulse 2s ease-in-out infinite alternate;
+  font-family: inherit;
+  text-shadow: none;
+  transform: translate(-25%, -25%);
+}
+
+@keyframes neonPulse {
+  0% {
+    box-shadow: 
+      0 0 3px #64ffda,
+      0 0 6px #64ffda,
+      0 0 10px #64ffda;
+    background: #64ffda;
+  }
+  100% {
+    box-shadow: 
+      0 0 5px #64ffda,
+      0 0 10px #64ffda,
+      0 0 15px #64ffda,
+      0 0 20px #64ffda;
+    background: #4fd1c7;
+  }
+}
+
+/* Hover effect for cart link */
+.nav-link:hover .neon-cart-badge {
+  animation-duration: 0.8s;
+  transform: translate(-25%, -25%) scale(1.1);
+}
+
+/* Mobile Neon Cart Badge */
+.neon-cart-badge-mobile {
+  background: #64ffda;
+  color: #000000;
+  font-size: 0.6rem;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 3px #64ffda,
+    0 0 6px #64ffda,
+    0 0 10px #64ffda;
+  animation: neonPulse 2s ease-in-out infinite alternate;
+  font-family: inherit;
+  text-shadow: none;
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}
+
+/* Mobile Cart Button */
+.mobile-cart-btn {
+  background: none;
+  border: none;
+  color: #64ffda;
+  font-size: 1.3rem;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mobile-cart-btn:hover {
+  color: #4fd1c7;
+  background: rgba(100, 255, 218, 0.1);
+}
+
+/* Cart Badge Styles (eski stil - yedek) */
+.cart-count-badge {
+  font-size: 0.75rem !important;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Cart link hover effect */
+.nav-link:has(.cart-count-badge):hover .cart-count-badge {
+  background-color: #dc3545 !important;
+  animation: pulse 0.6s infinite;
+}

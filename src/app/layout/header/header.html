@@ -43,12 +43,16 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" (click)="goToCart()">
-              <i class="fas fa-shopping-cart me-1"></i>
+            <a class="nav-link d-flex align-items-center" href="#" (click)="goToCart()">
+              <div class="position-relative me-1">
+                <i class="fas fa-shopping-cart"></i>
+                @if (cartCount > 0) {
+                  <span class="position-absolute top-0 start-100 translate-middle neon-cart-badge">
+                    {{ cartCount }}
+                  </span>
+                }
+              </div>
               Sepetim
-              @if (cartCount > 0) {
-                <span class="cart-badge">{{ cartCount }}</span>
-              }
             </a>
           </li>
           <li class="nav-item">
@@ -204,12 +208,25 @@
           
         </div>
         
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <!-- Mobile Cart & Menu -->
+        <div class="d-lg-none d-flex align-items-center gap-3">
+          <!-- Mobile Cart Button -->
+          <button class="mobile-cart-btn" (click)="goToCart()">
+            <div class="position-relative">
+              <i class="fas fa-shopping-cart"></i>
+              @if (cartCount > 0) {
+                <span class="neon-cart-badge-mobile">{{ cartCount }}</span>
+              }
+            </div>
+          </button>
+          
+          <!-- Mobile Menu Toggle -->
+          <button class="mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
         
       </div>
     </div>
@@ -241,6 +258,14 @@
     <ul class="mobile-nav">
       <li><a href="#" routerLink="/"><i class="fas fa-home me-2"></i>Anasayfa</a></li>
       <li><a href="#" routerLink="/categories"><i class="fas fa-th-large me-2"></i>Kategoriler</a></li>
+      <li>
+        <a href="#" (click)="goToCart()" class="d-flex align-items-center justify-content-between">
+          <span><i class="fas fa-shopping-cart me-2"></i>Sepetim</span>
+          @if (cartCount > 0) {
+            <span class="neon-cart-badge-mobile">{{ cartCount }}</span>
+          }
+        </a>
+      </li>
       <li><a href="#"><i class="fas fa-fire me-2"></i>Fırsatlar</a></li>
       <li><a href="#"><i class="fas fa-star me-2"></i>En Çok Satanlar</a></li>
       <li><a href="#"><i class="fas fa-truck me-2"></i>Kargo Takibi</a></li>
